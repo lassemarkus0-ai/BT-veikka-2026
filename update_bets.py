@@ -22,14 +22,11 @@ import argparse
 import json
 import os
 import sys
-import tempfile
-import time
-import urllib.error
-import urllib.request
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
 from zoneinfo import ZoneInfo
 
-API_URL = "https://liiga.fi/api/v2/schedule"
+from liiga_common import current_season, fetch_json, log, warn, write_json_atomic
+
 TOURNAMENT = "runkosarja"
 HELSINKI = ZoneInfo("Europe/Helsinki")
 
@@ -39,51 +36,14 @@ DATA_DT_FORMAT = "%d.%m.%Y %H.%M"
 # How far to look when hunting for a rescheduled fixture
 RESCHEDULE_WINDOW_DAYS = 10
 
-FETCH_ATTEMPTS = 3
-FETCH_BACKOFF_SECONDS = 3
-
-
-def log(msg: str) -> None:
-    print(msg, flush=True)
-
-
-def warn(msg: str) -> None:
-    print(f"WARNING: {msg}", file=sys.stderr, flush=True)
-
-
-def current_season() -> int:
-    """
-    Liiga seasons are named after the year they END in (the 2026-2027
-    season is season=2027). Play runs roughly September -> spring, so:
-      Aug-Dec -> next calendar year;  Jan-Jul -> this calendar year.
-    """
-    today = date.today()
-    return today.year + 1 if today.month >= 8 else today.year
-
 
 def fetch_schedule(season: int, tournament: str = TOURNAMENT) -> list[dict]:
-    """Fetch the full season schedule (all teams) from the Liiga API, with retries."""
-    url = f"{API_URL}?tournament={tournament}&season={season}"
-    req = urllib.request.Request(url, headers={"User-Agent": "karpat-bet-site/1.0"})
-
-    last_error = None
-    for attempt in range(1, FETCH_ATTEMPTS + 1):
-        try:
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                raw = resp.read().decode("utf-8")
-            games = json.loads(raw)
-            if not isinstance(games, list):
-                raise ValueError(f"expected a JSON array, got {type(games).__name__}")
-            return games
-        except (urllib.error.URLError, json.JSONDecodeError, ValueError, TimeoutError) as e:
-            last_error = e
-            if attempt < FETCH_ATTEMPTS:
-                wait = FETCH_BACKOFF_SECONDS * attempt
-                warn(f"Fetch attempt {attempt}/{FETCH_ATTEMPTS} failed ({e}); retrying in {wait}s")
-                time.sleep(wait)
-
-    print(f"ERROR: could not fetch schedule from {url}: {last_error}", file=sys.stderr)
-    sys.exit(1)
+    """Fetch the full season schedule (all teams) from the Liiga API."""
+    games = fetch_json("/schedule", params={"tournament": tournament, "season": season})
+    if not isinstance(games, list):
+        print(f"ERROR: expected a JSON array from /schedule, got {type(games).__name__}", file=sys.stderr)
+        sys.exit(1)
+    return games
 
 
 def local_date(game: dict) -> date:
@@ -200,23 +160,6 @@ def update_matches(matches: list[dict], exact: dict, pairs: dict) -> tuple[int, 
         log(f"({missing_future} future fixture(s) not currently present in the API response)")
 
     return updated, changes
-
-
-def write_json_atomic(path: str, data: dict) -> None:
-    """Write via a temp file + rename so an interrupted run can't corrupt data.json."""
-    directory = os.path.dirname(os.path.abspath(path)) or "."
-    fd, tmp_path = tempfile.mkstemp(dir=directory, prefix=".data-", suffix=".json.tmp")
-    try:
-        with os.fdopen(fd, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-            f.write("\n")
-            f.flush()
-            os.fsync(f.fileno())
-        os.replace(tmp_path, path)
-    except BaseException:
-        if os.path.exists(tmp_path):
-            os.unlink(tmp_path)
-        raise
 
 
 def main() -> None:

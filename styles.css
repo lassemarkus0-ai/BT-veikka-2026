@@ -421,6 +421,78 @@ section + section { margin-top: 36px; }
   text-decoration-thickness: 1px;
 }
 
+/* ---------- Kausiveikkaukset ---------- */
+
+.season-group + .season-group { margin-top: 20px; }
+
+.season-group-h {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  color: var(--himmea);
+  margin: 0 0 8px;
+}
+
+.season-cats {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.season-cat {
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+  padding: 12px 14px;
+}
+
+.season-cat:last-child { border-bottom: 0; }
+
+.season-cat.is-upcoming { background: transparent; }
+
+.sc-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 12px;
+  margin-bottom: 8px;
+}
+
+.sc-label {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.sc-answer {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: var(--keltainen);
+  white-space: nowrap;
+}
+
+.sc-answer.is-pending {
+  font-family: var(--body);
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: var(--himmea);
+}
+
+.sc-pts {
+  display: inline-block;
+  margin-left: 4px;
+  font-family: var(--body);
+  font-weight: 600;
+  font-size: 0.6875rem;
+  color: var(--field);
+  background: var(--keltainen);
+  padding: 1px 5px;
+  vertical-align: middle;
+}
+
 /* ---------- Tilaviestit ---------- */
 
 .status, .empty {

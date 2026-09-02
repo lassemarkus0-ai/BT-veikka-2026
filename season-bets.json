@@ -1,0 +1,48 @@
+{
+  "_comment": "Kausiveikkaukset — kertaluontoiset ennustukset koko kaudelle, erillään ottelukohtaisista 1/2-veikkauksista (data.json). 'answer' on null kunnes lopputulos tiedetään. 'team-rank'-tyypin kategoriat pisteytetään ryhmänä (katso rankGroup): koko ryhmä pitää olla ratkaistu ennen kuin mikään sen kategorioista antaa pisteitä. Joukkuenimien pitää täsmätä Liiga-APIn nimiin: HIFK, HPK, Ilves, Jokerit, Jukurit, JYP, KalPa, K-Espoo, KooKoo, Kärpät, Lukko, Pelicans, SaiPa, Sport, Tappara, TPS, Ässät.",
+
+  "categories": [
+    { "id": "kulta",   "group": "medals", "rankGroup": "medals", "label": "Mestari (kulta)", "type": "team-rank", "maxPoints": 3, "answer": null },
+    { "id": "hopea",   "group": "medals", "rankGroup": "medals", "label": "Hopea",            "type": "team-rank", "maxPoints": 3, "answer": null },
+    { "id": "pronssi", "group": "medals", "rankGroup": "medals", "label": "Pronssi",           "type": "team-rank", "maxPoints": 3, "answer": null },
+
+    { "id": "runkosarja_1", "group": "standings", "rankGroup": "standings", "label": "Runkosarja 1.", "type": "team-rank", "maxPoints": 3, "answer": null },
+    { "id": "runkosarja_2", "group": "standings", "rankGroup": "standings", "label": "Runkosarja 2.", "type": "team-rank", "maxPoints": 3, "answer": null },
+    { "id": "runkosarja_3", "group": "standings", "rankGroup": "standings", "label": "Runkosarja 3.", "type": "team-rank", "maxPoints": 3, "answer": null },
+
+    { "id": "putoaja_1", "group": "relegation", "rankGroup": "relegation", "label": "1. putoava (paras putoajista)", "type": "team-rank", "maxPoints": 3, "answer": null },
+    { "id": "putoaja_2", "group": "relegation", "rankGroup": "relegation", "label": "2. putoava",                     "type": "team-rank", "maxPoints": 3, "answer": null },
+    { "id": "putoaja_3", "group": "relegation", "rankGroup": "relegation", "label": "3. putoava (liigan huonoin)",    "type": "team-rank", "maxPoints": 3, "answer": null },
+
+    { "id": "runkosarjan_viimeinen",    "group": "misc", "label": "Runkosarjan viimeinen",                      "type": "exact", "maxPoints": 1, "answer": null },
+    { "id": "karpat_liigasijoitus",     "group": "misc", "label": "Kärppien liigasijoitus",                     "type": "exact", "maxPoints": 1, "answer": null },
+    { "id": "liiga_paras_pisteporssi",  "group": "misc", "label": "Liigan paras pistepörssissä",                "type": "exact", "maxPoints": 1, "answer": null },
+    { "id": "karpat_paras_pisteporssi", "group": "misc", "label": "Kärppien paras pistepörssissä",              "type": "exact", "maxPoints": 1, "answer": null },
+    { "id": "liiga_paras_maalintekija", "group": "misc", "label": "Liigan paras maalintekijä",                  "type": "exact", "maxPoints": 1, "answer": null },
+    { "id": "karpat_paras_maalintekija","group": "misc", "label": "Kärppien paras maalintekijä",                "type": "exact", "maxPoints": 1, "answer": null },
+    { "id": "liiga_jaahykuningas",      "group": "misc", "label": "Liigan jäähykuningas",                       "type": "exact", "maxPoints": 1, "answer": null },
+    { "id": "karpat_jaahykuningas",     "group": "misc", "label": "Kärppien jäähykuningas",                     "type": "exact", "maxPoints": 1, "answer": null },
+    { "id": "liiga_paras_maalivahti",   "group": "misc", "label": "Liigan paras maalivahti torjuntaprosentin perusteella", "type": "exact", "maxPoints": 1, "answer": null },
+    { "id": "liiga_paras_plusmiinus",   "group": "misc", "label": "Liigan paras +/- tilastossa",                "type": "exact", "maxPoints": 1, "answer": null },
+    { "id": "karpat_paras_plusmiinus",  "group": "misc", "label": "Kärppien paras +/- tilastossa",              "type": "exact", "maxPoints": 1, "answer": null },
+    { "id": "liiga_huonoin_plusmiinus", "group": "misc", "label": "Liigan huonoin +/- tilastossa",              "type": "exact", "maxPoints": 1, "answer": null },
+    { "id": "karpat_huonoin_plusmiinus","group": "misc", "label": "Kärppien huonoin +/- tilastossa",            "type": "exact", "maxPoints": 1, "answer": null },
+
+    { "id": "liiga_mv_torjuntaprosentti", "group": "tolerance", "label": "Liigan parhaan maalivahdin torjuntaprosentti", "type": "numeric-tolerance", "tolerance": 0.2, "unit": "%-yks.", "maxPoints": 2, "answer": null },
+    { "id": "karpat_yleisokeskiarvo",     "group": "tolerance", "label": "Kärppien kotiotteluiden yleisökeskiarvo",      "type": "numeric-tolerance", "tolerance": 200, "unit": "katsojaa", "maxPoints": 2, "answer": null }
+  ],
+
+  "predictions": {
+    "kulta": {}, "hopea": {}, "pronssi": {},
+    "runkosarja_1": {}, "runkosarja_2": {}, "runkosarja_3": {},
+    "putoaja_1": {}, "putoaja_2": {}, "putoaja_3": {},
+    "runkosarjan_viimeinen": {}, "karpat_liigasijoitus": {},
+    "liiga_paras_pisteporssi": {}, "karpat_paras_pisteporssi": {},
+    "liiga_paras_maalintekija": {}, "karpat_paras_maalintekija": {},
+    "liiga_jaahykuningas": {}, "karpat_jaahykuningas": {},
+    "liiga_paras_maalivahti": {},
+    "liiga_paras_plusmiinus": {}, "karpat_paras_plusmiinus": {},
+    "liiga_huonoin_plusmiinus": {}, "karpat_huonoin_plusmiinus": {},
+    "liiga_mv_torjuntaprosentti": {}, "karpat_yleisokeskiarvo": {}
+  }
+}

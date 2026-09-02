@@ -28,18 +28,21 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Update results from the Liiga API
+      - name: Update match results from the Liiga API
         run: python update_bets.py --data data.json
 
-      - name: Commit and push if data.json changed
+      - name: Update season bets from the Liiga API
+        run: python update_season_bets.py --data season-bets.json
+
+      - name: Commit and push if data.json or season-bets.json changed
         run: |
-          if git diff --quiet -- data.json; then
+          if git diff --quiet -- data.json season-bets.json; then
             echo "No changes to commit."
             exit 0
           fi
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data.json
+          git add data.json season-bets.json
           git commit -m "Update Kärpät results [skip ci]"
           # Rebase in case something else landed on the branch mid-run.
           git pull --rebase --autostash

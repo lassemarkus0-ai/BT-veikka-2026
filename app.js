@@ -4,7 +4,7 @@
   "use strict";
 
   var TEAM = "Kärpät";
-  var state = { data: null, filter: "all", initials: {} };
+  var state = { data: null, season: null, filter: "all", initials: {} };
 
   var $ = function (id) { return document.getElementById(id); };
 
@@ -54,6 +54,109 @@
 
   function isResolved(match) {
     return match.result === "1" || match.result === "2";
+  }
+
+  /* ---------- Kausiveikkaukset ----------
+     Erillinen kausikohtainen veikkaussarja (season-bets.json): mitalit,
+     runkosarjan kärkisijat, putoajat ja yksittäiset tilastoveikkaukset.
+     "answer" on null/tyhjä kunnes lopputulos tiedetään -- siihen asti
+     kategoria ei anna pisteitä, vaikka veikkaukset näkyvätkin. */
+
+  var SEASON_GROUP_ORDER = ["medals", "standings", "relegation", "misc", "tolerance"];
+  var SEASON_GROUP_LABELS = {
+    medals: "Mitalit",
+    standings: "Runkosarjan kärkisijat",
+    relegation: "Putoajat",
+    misc: "Muut veikkaukset",
+    tolerance: "Tarkkuusveikkaukset"
+  };
+
+  function normVal(v) {
+    if (v === null || v === undefined) return "";
+    return String(v).trim().toLowerCase();
+  }
+
+  function isResolvedCat(cat) {
+    return cat.answer !== null && cat.answer !== undefined && String(cat.answer).trim() !== "";
+  }
+
+  function rankGroupCats(categories, rankGroup) {
+    return categories.filter(function (c) { return c.rankGroup === rankGroup; });
+  }
+
+  function rankGroupResolved(categories, rankGroup) {
+    var group = rankGroupCats(categories, rankGroup);
+    return group.length > 0 && group.every(isResolvedCat);
+  }
+
+  // Palauttaa pisteet yhdestä veikkauksesta, tai null jos kategoria ei ole
+  // vielä ratkennut (tarkkuusveikkauksissa "lähimpänä" -bonus lasketaan erikseen).
+  function pointsForCategory(cat, categories, pick) {
+    if (cat.type === "team-rank") {
+      if (!rankGroupResolved(categories, cat.rankGroup)) return null;
+      if (!pick) return 0;
+      if (normVal(pick) === normVal(cat.answer)) return 3;
+      var group = rankGroupCats(categories, cat.rankGroup);
+      var rightTeamWrongSlot = group.some(function (c) { return normVal(c.answer) === normVal(pick); });
+      return rightTeamWrongSlot ? 1 : 0;
+    }
+    if (cat.type === "exact") {
+      if (!isResolvedCat(cat)) return null;
+      if (!pick) return 0;
+      return normVal(pick) === normVal(cat.answer) ? 1 : 0;
+    }
+    if (cat.type === "numeric-tolerance") {
+      if (!isResolvedCat(cat)) return null;
+      if (pick === "" || pick === null || pick === undefined || isNaN(Number(pick))) return 0;
+      var diff = Math.abs(Number(pick) - Number(cat.answer));
+      return diff <= cat.tolerance ? 1 : 0;
+    }
+    return null;
+  }
+
+  // Ketkä osuivat lähimmäs oikeaa lukuarvoa (jaettu bonuspiste tasapelissä).
+  function closestPlayers(cat, players, predictions) {
+    if (!isResolvedCat(cat)) return [];
+    var answer = Number(cat.answer);
+    var best = null;
+    var winners = [];
+    players.forEach(function (name) {
+      var pick = predictions[name];
+      if (pick === undefined || pick === null || pick === "" || isNaN(Number(pick))) return;
+      var diff = Math.abs(Number(pick) - answer);
+      if (best === null || diff < best) {
+        best = diff;
+        winners = [name];
+      } else if (diff === best) {
+        winners.push(name);
+      }
+    });
+    return winners;
+  }
+
+  // Laskee jokaisen kategorian veikkaukset + pisteet ja pelaajakohtaiset summat.
+  function computeSeasonScores(season, players) {
+    var categories = season.categories;
+    var totals = {};
+    players.forEach(function (name) { totals[name] = 0; });
+
+    var detail = categories.map(function (cat) {
+      var predictions = (season.predictions && season.predictions[cat.id]) || {};
+      var closest = cat.type === "numeric-tolerance" ? closestPlayers(cat, players, predictions) : [];
+
+      var picks = {};
+      players.forEach(function (name) {
+        var pick = predictions[name];
+        var pts = pointsForCategory(cat, categories, pick);
+        if (pts !== null && closest.indexOf(name) !== -1) pts += 1;
+        picks[name] = { value: pick, points: pts };
+        if (pts) totals[name] += pts;
+      });
+
+      return { cat: cat, picks: picks, closest: closest };
+    });
+
+    return { totals: totals, detail: detail };
   }
 
   // Lisämerkintä jatkoajasta / voittolaukauksista
@@ -114,7 +217,8 @@
 
   /* ---------- Laskenta ---------- */
 
-  function computeStandings(data) {
+  function computeStandings(data, seasonTotals) {
+    seasonTotals = seasonTotals || {};
     var rows = data.players.map(function (name) {
       return { name: name, points: 0, hits: 0, played: 0 };
     });
@@ -136,6 +240,9 @@
         }
       });
     });
+
+    // Kausiveikkausten pisteet lisätään samaan kokonaissummaan.
+    rows.forEach(function (r) { r.points += seasonTotals[r.name] || 0; });
 
     rows.sort(function (a, b) {
       if (b.points !== a.points) return b.points - a.points;
@@ -322,10 +429,72 @@
     });
   }
 
+  function renderSeason(season, players, computed) {
+    var section = $("season-section");
+    if (!season || !computed) { section.hidden = true; return; }
+    section.hidden = false;
+
+    var byGroup = {};
+    computed.detail.forEach(function (d) {
+      var g = d.cat.group;
+      (byGroup[g] = byGroup[g] || []).push(d);
+    });
+
+    var container = $("season-groups");
+    container.innerHTML = "";
+
+    SEASON_GROUP_ORDER.forEach(function (g) {
+      var items = byGroup[g];
+      if (!items || !items.length) return;
+
+      var groupEl = el("div", "season-group");
+      groupEl.appendChild(el("h3", "season-group-h", SEASON_GROUP_LABELS[g] || g));
+
+      var list = el("ul", "season-cats");
+      items.forEach(function (d) {
+        var cat = d.cat;
+        var resolved = isResolvedCat(cat);
+
+        var li = el("li", "season-cat" + (resolved ? "" : " is-upcoming"));
+
+        var top = el("div", "sc-top");
+        top.appendChild(el("span", "sc-label", cat.label));
+        var answerText = resolved ? String(cat.answer) + (cat.unit ? " " + cat.unit : "") : "avoinna";
+        top.appendChild(el("span", "sc-answer" + (resolved ? "" : " is-pending"), answerText));
+        li.appendChild(top);
+
+        var picks = el("ul", "m-picks");
+        players.forEach(function (name) {
+          var p = d.picks[name];
+          var cls = "chip";
+          if (p.points !== null) cls += p.points > 0 ? " is-hit" : " is-miss";
+
+          var chip = el("li", cls);
+          chip.appendChild(document.createTextNode(state.initials[name]));
+          var valText = (p.value === undefined || p.value === null || p.value === "") ? "–" : String(p.value);
+          chip.appendChild(el("b", null, valText));
+          if (p.points) chip.appendChild(el("span", "sc-pts", "+" + p.points));
+
+          var verdict = p.points === null ? "ratkeamatta" : (p.points > 0 ? p.points + " p" : "ei osunut");
+          chip.title = name + ": " + valText + " – " + verdict;
+          picks.appendChild(chip);
+        });
+        li.appendChild(picks);
+
+        list.appendChild(li);
+      });
+
+      groupEl.appendChild(list);
+      container.appendChild(groupEl);
+    });
+  }
+
   function renderAll() {
-    renderStandings(computeStandings(state.data));
+    var seasonComputed = state.season ? computeSeasonScores(state.season, state.data.players) : null;
+    renderStandings(computeStandings(state.data, seasonComputed ? seasonComputed.totals : {}));
     renderNext(state.data);
     renderMatches(state.data);
+    renderSeason(state.season, state.data.players, seasonComputed);
   }
 
   /* ---------- Suodattimet ---------- */
@@ -346,16 +515,25 @@
   /* ---------- Käynnistys ---------- */
 
   function boot() {
-    fetch("data.json", { cache: "no-cache" })
-      .then(function (r) {
+    var seasonFetch = fetch("season-bets.json", { cache: "no-cache" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; }); // kausiveikkaukset ovat valinnaiset -- sivu toimii ilmankin
+
+    Promise.all([
+      fetch("data.json", { cache: "no-cache" }).then(function (r) {
         if (!r.ok) throw new Error("HTTP " + r.status);
         return r.json();
-      })
-      .then(function (data) {
+      }),
+      seasonFetch
+    ])
+      .then(function (results) {
+        var data = results[0];
+        var season = results[1];
         if (!data || !Array.isArray(data.players) || !Array.isArray(data.matches)) {
           throw new Error("data.json ei sisällä players- ja matches-listoja");
         }
         state.data = data;
+        state.season = (season && Array.isArray(season.categories)) ? season : null;
         state.initials = buildInitials(data.players);
         $("status").hidden = true;
         wireFilters();
