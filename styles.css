@@ -126,6 +126,12 @@ section + section { margin-top: 36px; }
   line-height: 1.1;
 }
 
+.next-split {
+  margin: 10px 0 0;
+  font-size: 0.75rem;
+  color: var(--himmea);
+}
+
 .next-picks {
   list-style: none;
   display: flex;
@@ -349,6 +355,21 @@ section + section { margin-top: 36px; }
   font-weight: 400;
   color: var(--himmea);
 }
+
+/* Painokerroin: kertoo montako pistettä oikea veikkaus tuosta ottelusta antoi. */
+.m-weight, .weight-demo {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  font-family: var(--body);
+  font-weight: 600;
+  font-size: 0.6875rem;
+  color: var(--field);
+  background: var(--keltainen);
+  vertical-align: middle;
+}
+
+.weight-demo { margin-left: 0; cursor: default; }
 
 .m-picks {
   display: flex;
