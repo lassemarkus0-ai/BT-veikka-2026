@@ -33,16 +33,39 @@
   ],
 
   "predictions": {
-    "kulta": {}, "hopea": {}, "pronssi": {},
-    "runkosarja_1": {}, "runkosarja_2": {}, "runkosarja_3": {},
-    "putoaja_1": {}, "putoaja_2": {}, "putoaja_3": {},
-    "runkosarjan_viimeinen": {}, "karpat_liigasijoitus": {},
-    "liiga_paras_pisteporssi": {}, "karpat_paras_pisteporssi": {},
-    "liiga_paras_maalintekija": {}, "karpat_paras_maalintekija": {},
-    "liiga_jaahykuningas": {}, "karpat_jaahykuningas": {},
-    "liiga_paras_maalivahti": {},
-    "liiga_paras_plusmiinus": {}, "karpat_paras_plusmiinus": {},
-    "liiga_huonoin_plusmiinus": {}, "karpat_huonoin_plusmiinus": {},
-    "liiga_mv_torjuntaprosentti": {}, "karpat_yleisokeskiarvo": {}
+    "kulta":   { "Asko": "KalPa",  "Markus": "Tappara", "Ilpo": "Kärpät",  "Absolut": "Tappara", "Kari": "JYP",    "Pasi": "Tappara" },
+    "hopea":   { "Asko": "Tappara","Markus": "Kärpät",  "Ilpo": "Ilves",   "Absolut": "Lukko",   "Kari": "Tappara","Pasi": "Ilves" },
+    "pronssi": { "Asko": "HIFK",   "Markus": "KalPa",   "Ilpo": "Tappara", "Absolut": "Kärpät",  "Kari": "Ilves",  "Pasi": "HIFK" },
+
+    "runkosarja_1": { "Asko": "KalPa", "Markus": "Kärpät", "Ilpo": "Ilves",   "Absolut": "Tappara", "Kari": "JYP",   "Pasi": "Tappara" },
+    "runkosarja_2": { "Asko": "Lukko", "Markus": "KalPa",  "Ilpo": "Tappara", "Absolut": "Lukko",   "Kari": "Ilves", "Pasi": "Ilves" },
+    "runkosarja_3": { "Asko": "HIFK",  "Markus": "HIFK",   "Ilpo": "Lukko",   "Absolut": "Ilves",   "Kari": "Tappara","Pasi": "HIFK" },
+
+    "putoaja_1": { "Asko": "Sport",   "Markus": "Sport",   "Ilpo": "Ässät",   "Absolut": "Jukurit", "Kari": "HPK",   "Pasi": "TPS" },
+    "putoaja_2": { "Asko": "Jukurit", "Markus": "KooKoo",  "Ilpo": "K-Espoo", "Absolut": "K-Espoo", "Kari": "Sport", "Pasi": "Sport" },
+    "putoaja_3": { "Asko": "HPK",     "Markus": "Jukurit", "Ilpo": "Jukurit", "Absolut": "Sport",   "Kari": "Jukurit","Pasi": "Jukurit" },
+
+    "runkosarjan_viimeinen": { "Asko": "Sport", "Markus": "Jukurit", "Ilpo": "Jukurit", "Absolut": "Jukurit", "Kari": "Jukurit", "Pasi": "Jukurit" },
+    "karpat_liigasijoitus":  { "Asko": "8", "Markus": "3", "Ilpo": "1", "Absolut": "3", "Kari": "8", "Pasi": "6" },
+
+    "liiga_paras_pisteporssi":  { "Asko": "Benjamin Rautiainen", "Markus": "Matyas Kantner", "Ilpo": "Matyas Kantner", "Absolut": "Joachim Blichfeld", "Kari": "Joachim Blichfeld", "Pasi": "Aapeli Räsänen" },
+    "karpat_paras_pisteporssi": { "Asko": "Roni Hirvonen",       "Markus": "Matyas Kantner", "Ilpo": "Matyas Kantner", "Absolut": "Samuli Ratinen",    "Kari": "Roni Hirvonen",     "Pasi": "Matyas Kantner" },
+
+    "liiga_paras_maalintekija":  { "Asko": "Joachim Blichfeld", "Markus": "Matyas Kantner", "Ilpo": "Patrick Curry",  "Absolut": "Dylan Fabre",          "Kari": "Jirko Tukiainen", "Pasi": "Joachim Blichfeld" },
+    "karpat_paras_maalintekija": { "Asko": "Matyas Kantner",    "Markus": "Matyas Kantner", "Ilpo": "Eetu Päkkilä",  "Absolut": "Andreas Okany",  "Kari": "Matyas Kantner",  "Pasi": "Matyas Kantner" },
+
+    "liiga_jaahykuningas":  { "Asko": "Zack Hayes",    "Markus": "Tommi Tikka", "Ilpo": "Cameron Hillis", "Absolut": "Oliver Lauridsen",     "Kari": "Ruben Rafkin",  "Pasi": "Tommi Tikka" },
+    "karpat_jaahykuningas": { "Asko": "Tommi Tikka",   "Markus": "Tommi Tikka","Ilpo": "Tommi Tikka",    "Absolut": "Tuomas Salmela","Kari": "Tommi Tikka",   "Pasi": "Tommi Tikka" },
+
+    "liiga_paras_maalivahti": { "Asko": "Christoffer Rifalk", "Markus": "Niklas Rubin", "Ilpo": "Niklas Rubin", "Absolut": "Christian Heljanko", "Kari": "Christian Heljanko", "Pasi": "Christian Heljanko" },
+
+    "liiga_paras_plusmiinus":  { "Asko": "Jesper Mattila",  "Markus": "Joachim Blichfeld", "Ilpo": "Harri Pesonen",   "Absolut": "Joachim Blichfeld", "Kari": "Lukas Jasek",     "Pasi": "Aleksi Matinmikko" },
+    "karpat_paras_plusmiinus": { "Asko": "Eemil Erholtz",     "Markus": "Eemil Erholtz",       "Ilpo": "Roni Hirvonen",   "Absolut": "Aleksi Matinmikko", "Kari": "Aleksi Matinmikko","Pasi": "Aleksi Matinmikko" },
+
+    "liiga_huonoin_plusmiinus":  { "Asko": "Zack Hayes",       "Markus": "Justin Addamo",   "Ilpo": "Justin Addamo",  "Absolut": "Miika Tiihonen",       "Kari": "Viljam Sandvik",   "Pasi": "Kalle Miketinac" },
+    "karpat_huonoin_plusmiinus": { "Asko": "Tuukka Tieksola",  "Markus": "Aleksi Matinmikko","Ilpo": "Nooa Viuhkola",  "Absolut": "Aleksi Matinmikko","Kari": "Aleksi Matinmikko","Pasi": "Tommi Tikka" },
+
+    "liiga_mv_torjuntaprosentti": { "Asko": 93.09, "Markus": 93.15, "Ilpo": 92.77, "Absolut": 93.2,  "Kari": 92.11, "Pasi": 94.21 },
+    "karpat_yleisokeskiarvo":     { "Asko": 4700,  "Markus": 5314,  "Ilpo": 5217,  "Absolut": 5197,  "Kari": 4612,  "Pasi": 4913 }
   }
 }
