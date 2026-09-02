@@ -820,7 +820,6 @@ section + section { margin-top: 36px; }
   :root { --gutter: 24px; }
 
   .masthead-in { padding-block: 26px 20px; }
-  .masthead-logo { width: 128px; }
   .sec-h { font-size: 1.75rem; }
   .next-teams { font-size: 1.875rem; }
 
