@@ -132,6 +132,12 @@ section + section { margin-top: 36px; }
   color: var(--himmea);
 }
 
+.next-odds {
+  margin: 6px 0 0;
+  font-size: 0.75rem;
+  color: var(--keltainen);
+}
+
 .next-picks {
   list-style: none;
   display: flex;
@@ -272,6 +278,72 @@ section + section { margin-top: 36px; }
   background: var(--keltainen);
   border-color: var(--keltainen);
   font-weight: 600;
+}
+
+/* ---------- Välilehdet ---------- */
+
+.tabs {
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 12px;
+}
+
+.tabs:not([hidden]) { display: flex; }
+
+.tab {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  letter-spacing: 0.01em;
+  color: var(--himmea);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 10px 16px;
+  min-height: 42px;
+  cursor: pointer;
+}
+
+.tab:hover { color: var(--valkoinen); }
+
+.tab.is-on {
+  color: var(--field);
+  background: var(--keltainen);
+  border-color: var(--keltainen);
+}
+
+/* ---------- Live-banneri ---------- */
+
+.live-banner {
+  align-items: center;
+  gap: 10px;
+  background: var(--panel);
+  border-left: 3px solid #E23B3B;
+  padding: 12px 14px;
+  margin-bottom: 20px;
+}
+
+.live-banner:not([hidden]) { display: flex; }
+
+.live-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #E23B3B;
+  flex: 0 0 auto;
+  animation: live-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.live-text {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.0625rem;
 }
 
 /* ---------- Selite ---------- */
@@ -493,6 +565,197 @@ section + section { margin-top: 36px; }
   vertical-align: middle;
 }
 
+.sc-live {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  color: var(--himmea);
+}
+
+.sc-live b { color: var(--keltainen); font-weight: 600; }
+
+.season-live-note:not([hidden]) { display: flex; align-items: center; gap: 6px; }
+
+.live-swatch {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--keltainen);
+}
+
+/* ---------- Ottelun tapahtumat (maalit) ---------- */
+
+.m-expand-btn {
+  margin-top: 8px;
+  font-family: var(--body);
+  font-size: 0.75rem;
+  color: var(--himmea);
+  background: transparent;
+  border: 0;
+  padding: 4px 0;
+  cursor: pointer;
+}
+
+.m-expand-btn:hover { color: var(--keltainen); }
+
+.m-detail {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.m-detail-loading, .m-detail-empty {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--himmea);
+}
+
+.goal-events {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.goal-event {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 0.8125rem;
+}
+
+.goal-event.is-karpat .goal-who b { color: var(--keltainen); }
+
+.goal-time {
+  flex: 0 0 auto;
+  color: var(--himmea);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.goal-who b { font-weight: 700; }
+
+/* ---------- Tilastot ---------- */
+
+.stats-table-wrap {
+  background: var(--panel);
+  margin-bottom: 20px;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: 28px 1fr 40px 64px;
+  gap: 8px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.8125rem;
+  align-items: center;
+}
+
+.stats-row:last-child { border-bottom: 0; }
+
+.stats-row.is-karpat { color: var(--keltainen); font-weight: 600; }
+
+.stats-head {
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  color: var(--himmea);
+  text-transform: uppercase;
+}
+
+.stats-pts { font-variant-numeric: tabular-nums; text-align: right; }
+
+.stat-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+}
+
+.stat-block { background: var(--panel); padding: 12px 14px; }
+
+.stat-block-h {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin: 0 0 8px;
+  color: var(--himmea);
+}
+
+.stat-leader-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: leader;
+}
+
+.stat-leader-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 0;
+  font-size: 0.8125rem;
+}
+
+.stat-leader-row.is-karpat .stat-leader-name { color: var(--keltainen); }
+
+.stat-leader-val {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ---------- Ennuste ---------- */
+
+.btn {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--field);
+  background: var(--keltainen);
+  border: 0;
+  padding: 12px 18px;
+  min-height: 44px;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+.btn:hover { background: var(--valkoinen); }
+
+.forecast-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--panel);
+}
+
+.forecast-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 70px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.forecast-row:last-child { border-bottom: 0; }
+
+.forecast-name {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.forecast-row.is-lead .forecast-name { color: var(--keltainen); }
+
+.forecast-pct {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
 /* ---------- Tilaviestit ---------- */
 
 .status, .empty {
@@ -574,4 +837,14 @@ section + section { margin-top: 36px; }
   .m-picks { justify-content: flex-end; flex-wrap: nowrap; }
 
   .matches { border-top: 0; }
+
+  /* m-expand-btn ja m-detail eivät kuulu neljän sarakkeen otteluriviin --
+     annetaan niiden viedä koko rivin leveys sarakejaon sijaan. */
+  .m-expand-btn, .m-detail { grid-column: 1 / -1; }
+
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1100px) {
+  .stat-grid { grid-template-columns: repeat(4, 1fr); }
 }

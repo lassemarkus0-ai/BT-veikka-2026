@@ -22,63 +22,115 @@
 
 <main class="wrap" id="main">
 
-  <!-- Seuraava ottelu -->
-  <section class="next" id="next-section" aria-labelledby="next-h" hidden>
-    <h2 class="sec-h" id="next-h">Seuraava ottelu</h2>
-    <div class="next-card">
-      <div class="next-meta">
-        <span class="next-date" id="next-date"></span>
-        <span class="next-teams" id="next-teams"></span>
-      </div>
-      <ul class="next-picks" id="next-picks"></ul>
-      <p class="next-split" id="next-split" hidden></p>
-    </div>
-  </section>
-
-  <!-- Sarjataulukko -->
-  <section class="board" aria-labelledby="board-h">
-    <div class="sec-head">
-      <h2 class="sec-h" id="board-h">Sarjataulukko</h2>
-      <p class="sec-note" id="board-note"></p>
-    </div>
-    <ol class="stand" id="standings"></ol>
-  </section>
-
-  <!-- Kausiveikkaukset -->
-  <section class="season" id="season-section" aria-labelledby="season-h" hidden>
-    <div class="sec-head">
-      <h2 class="sec-h" id="season-h">Kausiveikkaukset</h2>
-      <p class="sec-note">Mitalit ja putoajat ratkeavat vasta pudotuspelien/karsinnan jälkeen.</p>
-    </div>
-    <div id="season-groups"></div>
-  </section>
-
-  <!-- Ottelut -->
-  <section class="log" aria-labelledby="log-h">
-    <div class="sec-head">
-      <h2 class="sec-h" id="log-h">Ottelut</h2>
-      <div class="filters" role="group" aria-label="Suodata otteluita">
-        <button type="button" class="filter is-on" data-filter="all">Kaikki</button>
-        <button type="button" class="filter" data-filter="played">Pelatut</button>
-        <button type="button" class="filter" data-filter="upcoming">Tulevat</button>
-      </div>
-    </div>
-
-    <p class="legend">
-      <span class="lg"><span class="chip chip-demo is-hit" aria-hidden="true">1</span> osui</span>
-      <span class="lg"><span class="chip chip-demo is-miss" aria-hidden="true">2</span> meni ohi</span>
-      <span class="lg"><span class="chip chip-demo" aria-hidden="true">1</span> ratkeamatta</span>
-      <span class="lg"><span class="weight-demo" aria-hidden="true">×2</span> harvinaisin veikkaus painaa eniten</span>
-    </p>
-
-    <div class="log-head" aria-hidden="true">
-      <span>Pvm</span><span>Ottelu</span><span>Tulos</span><span>Veikkaukset</span>
-    </div>
-    <ol class="matches" id="matches"></ol>
-    <p class="empty" id="log-empty" hidden></p>
-  </section>
-
   <p class="status" id="status">Ladataan veikkauksia…</p>
+
+  <nav class="tabs" role="tablist" aria-label="Näkymät" id="tabs" hidden>
+    <button type="button" class="tab is-on" data-tab="ottelut" role="tab" aria-selected="true">Ottelut</button>
+    <button type="button" class="tab" data-tab="kausi" role="tab" aria-selected="false">Kausiveikkaukset</button>
+    <button type="button" class="tab" data-tab="tilastot" role="tab" aria-selected="false">Tilastot</button>
+    <button type="button" class="tab" data-tab="ennuste" role="tab" aria-selected="false">Ennuste</button>
+  </nav>
+
+  <!-- ================= OTTELUT ================= -->
+  <div class="tab-panel" id="tab-ottelut" role="tabpanel">
+
+    <section class="live-banner" id="live-banner" hidden aria-live="polite">
+      <span class="live-dot" aria-hidden="true"></span>
+      <span class="live-text" id="live-text"></span>
+    </section>
+
+    <!-- Seuraava ottelu -->
+    <section class="next" id="next-section" aria-labelledby="next-h" hidden>
+      <h2 class="sec-h" id="next-h">Seuraava ottelu</h2>
+      <div class="next-card">
+        <div class="next-meta">
+          <span class="next-date" id="next-date"></span>
+          <span class="next-teams" id="next-teams"></span>
+        </div>
+        <ul class="next-picks" id="next-picks"></ul>
+        <p class="next-split" id="next-split" hidden></p>
+        <p class="next-odds" id="next-odds" hidden></p>
+      </div>
+    </section>
+
+    <!-- Sarjataulukko -->
+    <section class="board" aria-labelledby="board-h">
+      <div class="sec-head">
+        <h2 class="sec-h" id="board-h">Sarjataulukko</h2>
+        <p class="sec-note" id="board-note"></p>
+      </div>
+      <ol class="stand" id="standings"></ol>
+    </section>
+
+    <!-- Ottelut -->
+    <section class="log" aria-labelledby="log-h">
+      <div class="sec-head">
+        <h2 class="sec-h" id="log-h">Ottelut</h2>
+        <div class="filters" role="group" aria-label="Suodata otteluita">
+          <button type="button" class="filter is-on" data-filter="all">Kaikki</button>
+          <button type="button" class="filter" data-filter="played">Pelatut</button>
+          <button type="button" class="filter" data-filter="upcoming">Tulevat</button>
+        </div>
+      </div>
+
+      <p class="legend">
+        <span class="lg"><span class="chip chip-demo is-hit" aria-hidden="true">1</span> osui</span>
+        <span class="lg"><span class="chip chip-demo is-miss" aria-hidden="true">2</span> meni ohi</span>
+        <span class="lg"><span class="chip chip-demo" aria-hidden="true">1</span> ratkeamatta</span>
+        <span class="lg"><span class="weight-demo" aria-hidden="true">×2</span> harvinaisin veikkaus painaa eniten</span>
+      </p>
+
+      <div class="log-head" aria-hidden="true">
+        <span>Pvm</span><span>Ottelu</span><span>Tulos</span><span>Veikkaukset</span>
+      </div>
+      <ol class="matches" id="matches"></ol>
+      <p class="empty" id="log-empty" hidden></p>
+    </section>
+
+  </div>
+
+  <!-- ================= KAUSIVEIKKAUKSET ================= -->
+  <div class="tab-panel" id="tab-kausi" role="tabpanel" hidden>
+    <section class="season" id="season-section" aria-labelledby="season-h" hidden>
+      <div class="sec-head">
+        <h2 class="sec-h" id="season-h">Kausiveikkaukset</h2>
+        <p class="sec-note">Mitalit ja putoajat ratkeavat vasta pudotuspelien/karsinnan jälkeen.</p>
+      </div>
+      <p class="sec-note season-live-note" id="season-live-note" hidden>
+        Kohteet joissa on <span class="live-swatch" aria-hidden="true"></span>-merkki näyttävät kauden
+        <em>nykyisen</em> johtajan ennakkoon — pisteet eivät lasketa mukaan sarjataulukkoon ennen
+        virallista ratkeamista.
+      </p>
+      <div id="season-groups"></div>
+    </section>
+  </div>
+
+  <!-- ================= TILASTOT ================= -->
+  <div class="tab-panel" id="tab-tilastot" role="tabpanel" hidden>
+    <section class="stats-ref" aria-labelledby="stats-h">
+      <div class="sec-head">
+        <h2 class="sec-h" id="stats-h">Tilastot</h2>
+        <p class="sec-note" id="stats-note">Suoraan Liiga.fi:stä, päivittyy sivun latauksen yhteydessä.</p>
+      </div>
+      <div id="stats-content"><p class="empty">Ladataan tilastoja…</p></div>
+    </section>
+  </div>
+
+  <!-- ================= ENNUSTE ================= -->
+  <div class="tab-panel" id="tab-ennuste" role="tabpanel" hidden>
+    <section class="forecast" aria-labelledby="forecast-h">
+      <div class="sec-head">
+        <h2 class="sec-h" id="forecast-h">Voittoennuste</h2>
+        <p class="sec-note">
+          Simulaatio jäljellä olevista Kärpät-otteluista: 10&nbsp;000 kierrosta, otteluiden
+          todennäköisyydet Veikkauksen kertoimista silloin kun niitä on saatavilla, muuten porukan
+          oman jaon mukaan. Kausiveikkauksia (mitalit, sijoitukset, tilastot) ei ole mukana.
+        </p>
+      </div>
+      <button type="button" class="btn" id="forecast-run">Laske ennuste</button>
+      <div id="forecast-content"></div>
+    </section>
+  </div>
 
 </main>
 
@@ -96,6 +148,7 @@
   </div>
 </footer>
 
+<script src="liiga-live.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
