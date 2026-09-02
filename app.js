@@ -141,6 +141,15 @@
     tolerance: "Tarkkuusveikkaukset"
   };
 
+  // Kategoriat joilla ei koskaan ole live-lähdettä (ratkeavat pudotuspeleissä/
+  // karsinnassa, tai vaatisivat erillisen kotiotteludatan). Käytetään sekä
+  // ryhmien järjestykseen (nämä alalaitaan) että chippien värjäykseen.
+  var NO_LIVE_SOURCE = {
+    kulta: true, hopea: true, pronssi: true,
+    putoaja_1: true, putoaja_2: true, putoaja_3: true,
+    karpat_yleisokeskiarvo: true
+  };
+
   function normVal(v) {
     if (v === null || v === undefined) return "";
     return String(v).trim().toLowerCase();
@@ -727,9 +736,19 @@
     var container = $("season-groups");
     container.innerHTML = "";
 
+    // Ryhmät joilla ei ole yhtäkään live-lähteistä kategoriaa siirtyvät
+    // sivun alalaitaan (mitalit, putoajat); loput pysyvät alkuperäisessä
+    // järjestyksessä.
+    var topTier = [], bottomTier = [];
     SEASON_GROUP_ORDER.forEach(function (g) {
       var items = byGroup[g];
       if (!items || !items.length) return;
+      var anyLiveSource = items.some(function (d) { return !NO_LIVE_SOURCE[d.cat.id]; });
+      (anyLiveSource ? topTier : bottomTier).push(g);
+    });
+
+    topTier.concat(bottomTier).forEach(function (g) {
+      var items = byGroup[g];
 
       var groupEl = el("div", "season-group");
       groupEl.appendChild(el("h3", "season-group-h", SEASON_GROUP_LABELS[g] || g));
@@ -747,11 +766,24 @@
         top.appendChild(el("span", "sc-answer" + (resolved ? "" : " is-pending"), answerText));
         li.appendChild(top);
 
+        var catLive = liveDetail && liveDetail[cat.id];
+        var catLiveKnown = !resolved && catLive && catLive.answer !== null;
+
         var picks = el("ul", "m-picks");
         players.forEach(function (name) {
           var p = d.picks[name];
+          var liveHit = catLiveKnown && catLive.picks[name] > 0;
           var cls = "chip";
-          if (p.points !== null) cls += p.points > 0 ? " is-hit" : " is-miss";
+          var verdict;
+          if (p.points !== null) {
+            cls += p.points > 0 ? " is-hit" : " is-miss";
+            verdict = p.points > 0 ? p.points + " p" : "ei osunut";
+          } else if (liveHit) {
+            cls += " is-hit"; // johtaa juuri nyt -- ei vielä virallinen ratkaisu
+            verdict = "johdossa juuri nyt (" + catLive.picks[name] + " p, ei virallinen)";
+          } else {
+            verdict = "ratkeamatta";
+          }
 
           var chip = el("li", cls);
           chip.appendChild(document.createTextNode(state.initials[name]));
@@ -759,7 +791,6 @@
           chip.appendChild(el("b", null, valText));
           if (p.points) chip.appendChild(el("span", "sc-pts", "+" + p.points));
 
-          var verdict = p.points === null ? "ratkeamatta" : (p.points > 0 ? p.points + " p" : "ei osunut");
           chip.title = name + ": " + valText + " – " + verdict;
           picks.appendChild(chip);
         });
@@ -767,9 +798,9 @@
 
         // "Nyt johdossa" -ennakko: vain ratkeamattomille kategorioille joilla
         // on live-lähde, eikä koskaan sarjataulukon pisteisiin.
-        if (!resolved && liveDetail && liveDetail[cat.id] && liveDetail[cat.id].answer !== null) {
+        if (catLiveKnown) {
           anyLive = true;
-          var lv = liveDetail[cat.id];
+          var lv = catLive;
           var liveLine = el("p", "sc-live");
           liveLine.appendChild(document.createTextNode("Nyt johdossa: "));
           liveLine.appendChild(el("b", null, String(lv.answer) + (cat.unit ? " " + cat.unit : "")));
