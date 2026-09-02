@@ -71,23 +71,69 @@
     return n;
   }
 
+  // Suomalainen desimaalipilkku; painot ovat aina 1, 1,5 tai 2, tai näiden summia,
+  // joten ei kellumaluku-pyöristysongelmia, mutta pyöristetään silti varmuuden vuoksi.
+  function fmtPoints(n) {
+    var r = Math.round(n * 10) / 10;
+    return (r % 1 === 0 ? String(r) : r.toFixed(1)).replace(".", ",");
+  }
+
+  /* ---------- Painokertoimet ----------
+     Sääntö: eniten veikattu vaihtoehto = paino 1, vähiten veikattu = paino 2,
+     tasan mennyt jako = paino 1,5 molemmille. Paino riippuu vain siitä miten
+     porukka veikkasi, ei ottelun lopputuloksesta — voidaan siis laskea myös
+     vielä pelaamattomalle ottelulle. */
+
+  function voteCounts(match, players) {
+    var c1 = 0, c2 = 0;
+    players.forEach(function (name) {
+      var p = match.predictions ? match.predictions[name] : undefined;
+      if (p === "1") c1++;
+      else if (p === "2") c2++;
+    });
+    return { c1: c1, c2: c2 };
+  }
+
+  function matchWeights(match, players) {
+    var v = voteCounts(match, players);
+    var w;
+    if (v.c1 === v.c2) w = { w1: 1.5, w2: 1.5 };
+    else if (v.c1 > v.c2) w = { w1: 1, w2: 2 };
+    else w = { w1: 2, w2: 1 };
+    w.c1 = v.c1;
+    w.c2 = v.c2;
+    return w;
+  }
+
+  // Toteutuneen tuloksen kerroin — tämä on ainoa kerroin joka vaikuttaa pisteisiin.
+  function resultWeight(match, players) {
+    if (!isResolved(match)) return null;
+    var w = matchWeights(match, players);
+    return match.result === "1" ? w.w1 : w.w2;
+  }
+
   /* ---------- Laskenta ---------- */
 
   function computeStandings(data) {
     var rows = data.players.map(function (name) {
-      return { name: name, points: 0, played: 0 };
+      return { name: name, points: 0, hits: 0, played: 0 };
     });
     var byName = {};
     rows.forEach(function (r) { byName[r.name] = r; });
 
     data.matches.forEach(function (match) {
       if (!isResolved(match)) return;
+      var weight = resultWeight(match, data.players);
+
       data.players.forEach(function (name) {
         var pick = match.predictions ? match.predictions[name] : undefined;
-        if (pick === undefined || pick === "") return;   // ei veikkausta
+        if (pick !== "1" && pick !== "2") return;   // ei veikkausta
         var row = byName[name];
         row.played++;
-        if (pick === match.result) row.points++;
+        if (pick === match.result) {
+          row.hits++;
+          row.points += weight;
+        }
       });
     });
 
@@ -119,15 +165,17 @@
 
       var track = el("div", "track");
       var fill = el("span", "fill");
-      var pct = row.played ? (row.points / row.played) * 100 : 0;
+      // Palkin pituus suhteessa kärkeen, ei osumaprosenttiin — painotetut
+      // pisteet voivat ylittää pelattujen otteluiden määrän.
+      var pct = best ? (row.points / best) * 100 : 0;
       track.appendChild(fill);
       main.appendChild(track);
       li.appendChild(main);
 
       var figs = el("div", "stand-figs");
-      figs.appendChild(el("span", "stand-pts", String(row.points)));
+      figs.appendChild(el("span", "stand-pts", fmtPoints(row.points)));
       figs.appendChild(el("span", "stand-pct",
-        row.played ? Math.round(pct) + " % / " + row.played + " ottelua" : "ei pelejä"));
+        row.played ? row.hits + "/" + row.played + " oikein" : "ei pelejä"));
       li.appendChild(figs);
 
       list.appendChild(li);
@@ -175,6 +223,16 @@
       li.appendChild(el("span", "next-pick-val", pick || "–"));
       list.appendChild(li);
     });
+
+    var splitEl = $("next-split");
+    var vw = matchWeights(next.m, data.players);
+    if (vw.c1 + vw.c2 > 0) {
+      splitEl.hidden = false;
+      splitEl.textContent = "Jako juuri nyt: 1 = " + vw.c1 + " (kerroin ×" + fmtPoints(vw.w1) +
+        "), 2 = " + vw.c2 + " (kerroin ×" + fmtPoints(vw.w2) + ")";
+    } else {
+      splitEl.hidden = true;
+    }
   }
 
   function renderMatches(data) {
@@ -231,6 +289,13 @@
         score = el("span", "m-score", m.result === "1" ? "1" : "2");
       } else {
         score = el("span", "m-score is-pending", "–");
+      }
+      if (resolved) {
+        var vw = matchWeights(m, data.players);
+        var weight = m.result === "1" ? vw.w1 : vw.w2;
+        score.appendChild(el("span", "m-weight", "×" + fmtPoints(weight)));
+        score.title = "Veikkausjako: 1 – " + vw.c1 + " kpl, 2 – " + vw.c2 +
+          " kpl. Oikean veikkauksen kerroin ×" + fmtPoints(weight) + ".";
       }
       top.appendChild(score);
       li.appendChild(top);
