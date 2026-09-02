@@ -280,6 +280,11 @@ section + section { margin-top: 36px; }
   font-weight: 600;
 }
 
+.board-mode { margin-bottom: 12px; }
+.board-mode[hidden] { display: none; }
+
+.board-live-note { border-left: 2px solid var(--keltainen); padding-left: 10px; }
+
 /* ---------- Välilehdet ---------- */
 
 .tabs {

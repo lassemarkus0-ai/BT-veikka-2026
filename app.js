@@ -14,7 +14,8 @@
 
   var state = {
     data: null, season: null, live: null,
-    filter: "all", initials: {}, liveTimer: null
+    filter: "all", boardMode: "official", initials: {}, liveTimer: null,
+    officialSeasonTotals: {}, liveSeasonTotals: null
   };
 
   var $ = function (id) { return document.getElementById(id); };
@@ -321,6 +322,39 @@
     return detail;
   }
 
+  // Pelaajakohtaiset kausiveikkausten KOKONAISPISTEET "jos kausi loppuisi nyt":
+  // ratkenneet kategoriat pisteytetään virallisella vastauksella (ei koskaan
+  // muutu), ratkeamattomat live-lasketulla johtajalla siltä osin kuin sellainen
+  // on saatavilla. Käytetään vain Sarjataulukon "live"-näkymässä -- ei koskaan
+  // viralliseen kokonaissummaan.
+  function computeLiveSeasonTotals(season, players, live) {
+    if (!season || !live) return null;
+
+    var categories = season.categories.map(function (cat) {
+      if (isResolvedCat(cat)) return cat;
+      var clone = {};
+      for (var k in cat) if (Object.prototype.hasOwnProperty.call(cat, k)) clone[k] = cat[k];
+      clone.answer = liveAnswerFor(cat.id, live);
+      return clone;
+    });
+
+    var totals = {};
+    players.forEach(function (name) { totals[name] = 0; });
+
+    categories.forEach(function (cat) {
+      var predictions = (season.predictions && season.predictions[cat.id]) || {};
+      var closest = cat.type === "numeric-tolerance" ? closestPlayers(cat, players, predictions) : [];
+      players.forEach(function (name) {
+        var pick = predictions[name];
+        var pts = pointsForCategory(cat, categories, pick);
+        if (pts !== null && closest.indexOf(name) !== -1) pts += 1;
+        if (pts) totals[name] += pts;
+      });
+    });
+
+    return totals;
+  }
+
   /* ---------- Ottelupisteiden laskenta ---------- */
 
   function computeMatchPoints(data) {
@@ -418,6 +452,36 @@
     $("board-note").textContent = resolved
       ? resolved + " / " + state.data.matches.length + " ottelua ratkennut"
       : "Kausi ei ole vielä alkanut";
+  }
+
+  // Valitsee virallisen tai live-ennakon kausipisteet state.boardMode:n mukaan
+  // ja piirtää Sarjataulukon. Live-näkymä on aina vain näyttö -- ei koskaan
+  // ainoa lähde mihinkään muuhun laskentaan.
+  function renderBoard() {
+    var modeGroup = $("board-mode");
+    var haveLive = !!state.liveSeasonTotals;
+    modeGroup.hidden = !haveLive;
+    if (!haveLive) state.boardMode = "official";
+
+    var useLive = state.boardMode === "live" && haveLive;
+    $("board-live-note").hidden = !useLive;
+
+    var totals = useLive ? state.liveSeasonTotals : state.officialSeasonTotals;
+    renderStandings(computeStandings(state.data, totals));
+  }
+
+  function wireBoardMode() {
+    var group = $("board-mode");
+    var buttons = group.querySelectorAll(".filter");
+    Array.prototype.forEach.call(buttons, function (btn) {
+      btn.addEventListener("click", function () {
+        state.boardMode = btn.getAttribute("data-mode");
+        Array.prototype.forEach.call(buttons, function (b) {
+          b.classList.toggle("is-on", b === btn);
+        });
+        renderBoard();
+      });
+    });
   }
 
   function renderNext(data) {
@@ -1006,7 +1070,12 @@
       ? computeLiveSeasonPreview(state.season, state.data.players, state.live)
       : null;
 
-    renderStandings(computeStandings(state.data, seasonComputed ? seasonComputed.totals : {}));
+    state.officialSeasonTotals = seasonComputed ? seasonComputed.totals : {};
+    state.liveSeasonTotals = (state.season && state.live)
+      ? computeLiveSeasonTotals(state.season, state.data.players, state.live)
+      : null;
+
+    renderBoard();
     renderNext(state.data);
     renderMatches(state.data);
     renderSeason(state.season, state.data.players, seasonComputed, liveDetail);
@@ -1050,6 +1119,7 @@
         wireTabs();
         wireFilters();
         wireForecast();
+        wireBoardMode();
         renderAll();
         checkLiveGame();
 

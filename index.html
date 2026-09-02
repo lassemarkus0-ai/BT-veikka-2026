@@ -59,6 +59,14 @@
         <h2 class="sec-h" id="board-h">Sarjataulukko</h2>
         <p class="sec-note" id="board-note"></p>
       </div>
+      <div class="filters board-mode" role="group" aria-label="Näytä pisteet" id="board-mode" hidden>
+        <button type="button" class="filter is-on" data-mode="official">Virallinen</button>
+        <button type="button" class="filter" data-mode="live">Jos kausi loppuisi nyt</button>
+      </div>
+      <p class="sec-note board-live-note" id="board-live-note" hidden>
+        Ennakko: kausiveikkausten ratkeamattomat kohteet pisteytetty niiden tämänhetkisen
+        johtajan mukaan. Ei virallinen tulos.
+      </p>
       <ol class="stand" id="standings"></ol>
     </section>
 
