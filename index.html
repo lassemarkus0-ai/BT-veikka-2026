@@ -31,6 +31,7 @@
         <span class="next-teams" id="next-teams"></span>
       </div>
       <ul class="next-picks" id="next-picks"></ul>
+      <p class="next-split" id="next-split" hidden></p>
     </div>
   </section>
 
@@ -58,6 +59,7 @@
       <span class="lg"><span class="chip chip-demo is-hit" aria-hidden="true">1</span> osui</span>
       <span class="lg"><span class="chip chip-demo is-miss" aria-hidden="true">2</span> meni ohi</span>
       <span class="lg"><span class="chip chip-demo" aria-hidden="true">1</span> ratkeamatta</span>
+      <span class="lg"><span class="weight-demo" aria-hidden="true">×2</span> harvinaisin veikkaus painaa eniten</span>
     </p>
 
     <div class="log-head" aria-hidden="true">
@@ -74,6 +76,9 @@
 <footer class="foot">
   <div class="wrap">
     <p>1 = kotivoitto, 2 = vierasvoitto. Jatkoaika- ja voittolaukausvoitot lasketaan normaalisti.</p>
+    <p>Pisteytys on painotettu: kunkin ottelun oikeasta veikkauksesta saa pisteet sen mukaan
+       kuinka moni veikkasi samoin — eniten veikattu vaihtoehto ×1, vähiten veikattu ×2,
+       ja tasan mennyt jako ×1,5 kummallekin puolelle.</p>
     <p class="foot-upd" id="foot-upd"></p>
   </div>
 </footer>
