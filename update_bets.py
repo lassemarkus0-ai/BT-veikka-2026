@@ -7,10 +7,11 @@ Fetches the Liiga.fi runkosarja (regular season) schedule and fills in the
 are not yet marked as resolved.
 
 Bet convention (per data.json):
-    result / predictions: "1" = home team win, "2" = away team win.
-    A game counts once it has ENDED. Regulation, overtime and shootout
-    wins all count identically -- Liiga's "homeTeamWinner" flag already
-    reflects the final outcome regardless of how the game finished.
+    result / predictions: "1" = Kärpät win, "2" = Kärpät loss -- relative to
+    Kärpät regardless of whether they're playing home or away. A game counts
+    once it has ENDED. Regulation, overtime and shootout wins all count
+    identically -- Liiga's "homeTeamWinner" flag already reflects the final
+    outcome regardless of how the game finished.
 
 Usage:
     python update_bets.py
@@ -28,6 +29,7 @@ from zoneinfo import ZoneInfo
 from liiga_common import current_season, fetch_json, log, warn, write_json_atomic
 
 TOURNAMENT = "runkosarja"
+KARPAT = "Kärpät"
 HELSINKI = ZoneInfo("Europe/Helsinki")
 
 # The date/time format used in data.json, e.g. "01.09.2026 18.30"
@@ -137,7 +139,9 @@ def update_matches(matches: list[dict], exact: dict, pairs: dict) -> tuple[int, 
         if not game.get("ended"):
             continue  # not played yet
 
-        winner = "1" if game["homeTeamWinner"] else "2"
+        home_won = game["homeTeamWinner"]
+        karpat_won = home_won if match["homeTeam"] == KARPAT else not home_won
+        winner = "1" if karpat_won else "2"
         match["result"] = winner
         # Extra context for the season-stats side of the site later.
         match["homeGoals"] = game["homeTeamGoals"]
