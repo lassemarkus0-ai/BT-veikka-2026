@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BT-Veikkaus</title>
+<meta name="description" content="Bästa Tittare -porukan veikkaukset Kärppien runkosarjasta.">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap masthead-in">
+    <h1 class="wordmark">BT<span class="wordmark-dash">–</span>Veikkaus</h1>
+    <p class="masthead-sub">Bästa Tittare · Kärpät · runkosarja</p>
+  </div>
+</header>
+
+<main class="wrap" id="main">
+
+  <!-- Seuraava ottelu -->
+  <section class="next" id="next-section" aria-labelledby="next-h" hidden>
+    <h2 class="sec-h" id="next-h">Seuraava ottelu</h2>
+    <div class="next-card">
+      <div class="next-meta">
+        <span class="next-date" id="next-date"></span>
+        <span class="next-teams" id="next-teams"></span>
+      </div>
+      <ul class="next-picks" id="next-picks"></ul>
+    </div>
+  </section>
+
+  <!-- Sarjataulukko -->
+  <section class="board" aria-labelledby="board-h">
+    <div class="sec-head">
+      <h2 class="sec-h" id="board-h">Sarjataulukko</h2>
+      <p class="sec-note" id="board-note"></p>
+    </div>
+    <ol class="stand" id="standings"></ol>
+  </section>
+
+  <!-- Ottelut -->
+  <section class="log" aria-labelledby="log-h">
+    <div class="sec-head">
+      <h2 class="sec-h" id="log-h">Ottelut</h2>
+      <div class="filters" role="group" aria-label="Suodata otteluita">
+        <button type="button" class="filter is-on" data-filter="all">Kaikki</button>
+        <button type="button" class="filter" data-filter="played">Pelatut</button>
+        <button type="button" class="filter" data-filter="upcoming">Tulevat</button>
+      </div>
+    </div>
+
+    <p class="legend">
+      <span class="lg"><span class="chip chip-demo is-hit" aria-hidden="true">1</span> osui</span>
+      <span class="lg"><span class="chip chip-demo is-miss" aria-hidden="true">2</span> meni ohi</span>
+      <span class="lg"><span class="chip chip-demo" aria-hidden="true">1</span> ratkeamatta</span>
+    </p>
+
+    <div class="log-head" aria-hidden="true">
+      <span>Pvm</span><span>Ottelu</span><span>Tulos</span><span>Veikkaukset</span>
+    </div>
+    <ol class="matches" id="matches"></ol>
+    <p class="empty" id="log-empty" hidden></p>
+  </section>
+
+  <p class="status" id="status">Ladataan veikkauksia…</p>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p>1 = kotivoitto, 2 = vierasvoitto. Jatkoaika- ja voittolaukausvoitot lasketaan normaalisti.</p>
+    <p class="foot-upd" id="foot-upd"></p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
