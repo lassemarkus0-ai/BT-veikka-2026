@@ -502,6 +502,10 @@ section + section { margin-top: 36px; }
 
 .chip.is-hit b { color: var(--field); }
 
+/* Ikoni värin lisäksi -- osuma/huti ei saa nojata pelkkään väriin. */
+.chip.is-hit b::before { content: "✓ "; }
+.chip.is-miss b::before { content: "✕ "; }
+
 .chip.is-miss {
   background: transparent;
   border-color: var(--line);
@@ -726,6 +730,35 @@ section + section { margin-top: 36px; }
   font-variant-numeric: tabular-nums;
   font-weight: 600;
   white-space: nowrap;
+}
+
+/* ---------- Ennätykset ---------- */
+
+.upset-card {
+  background: var(--panel-2);
+  padding: 12px 14px;
+  border-left: 3px solid var(--keltainen);
+}
+
+.upset-teams {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.upset-score {
+  margin: 4px 0 0;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.375rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.upset-meta {
+  margin: 6px 0 0;
+  font-size: 0.75rem;
+  color: var(--himmea);
 }
 
 /* ---------- Ennuste ---------- */

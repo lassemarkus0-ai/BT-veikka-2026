@@ -20,6 +20,25 @@
 
   var $ = function (id) { return document.getElementById(id); };
 
+  // Puhdas pisteytyslogiikka asuu scoring.js:ssä (testattavissa myös ilman
+  // DOM:ia/selainta) -- aliasoidaan tähän ettei loppu tiedosto muutu.
+  var isResolved = BTScoring.isResolved;
+  var fmtPoints = BTScoring.fmtPoints;
+  var fmtPct = BTScoring.fmtPct;
+  var voteCounts = BTScoring.voteCounts;
+  var matchWeights = BTScoring.matchWeights;
+  var resultWeight = BTScoring.resultWeight;
+  var normVal = BTScoring.normVal;
+  var isResolvedCat = BTScoring.isResolvedCat;
+  var rankGroupCats = BTScoring.rankGroupCats;
+  var rankGroupResolved = BTScoring.rankGroupResolved;
+  var pointsForCategory = BTScoring.pointsForCategory;
+  var closestPlayers = BTScoring.closestPlayers;
+  var computeSeasonScores = BTScoring.computeSeasonScores;
+  var computeMatchPoints = BTScoring.computeMatchPoints;
+  var computeStandings = BTScoring.computeStandings;
+  var overtimeTag = BTScoring.overtimeTag;
+
   /* ---------- Apufunktiot ---------- */
 
   function pad2(n) { return n < 10 ? "0" + n : String(n); }
@@ -70,60 +89,11 @@
     return out;
   }
 
-  function isResolved(match) {
-    return match.result === "1" || match.result === "2";
-  }
-
   function el(tag, cls, text) {
     var n = document.createElement(tag);
     if (cls) n.className = cls;
     if (text !== undefined && text !== null) n.textContent = text;
     return n;
-  }
-
-  // Suomalainen desimaalipilkku; painot ovat aina 1, 1,5 tai 2, tai näiden summia,
-  // joten ei kellumaluku-pyöristysongelmia, mutta pyöristetään silti varmuuden vuoksi.
-  function fmtPoints(n) {
-    var r = Math.round(n * 10) / 10;
-    return (r % 1 === 0 ? String(r) : r.toFixed(1)).replace(".", ",");
-  }
-
-  function fmtPct(n) {
-    return n.toFixed(1).replace(".", ",") + " %";
-  }
-
-  /* ---------- Painokertoimet ----------
-     Sääntö: eniten veikattu vaihtoehto = paino 1, vähiten veikattu = paino 2,
-     tasan mennyt jako = paino 1,5 molemmille. Paino riippuu vain siitä miten
-     porukka veikkasi, ei ottelun lopputuloksesta — voidaan siis laskea myös
-     vielä pelaamattomalle ottelulle. */
-
-  function voteCounts(match, players) {
-    var c1 = 0, c2 = 0;
-    players.forEach(function (name) {
-      var p = match.predictions ? match.predictions[name] : undefined;
-      if (p === "1") c1++;
-      else if (p === "2") c2++;
-    });
-    return { c1: c1, c2: c2 };
-  }
-
-  function matchWeights(match, players) {
-    var v = voteCounts(match, players);
-    var w;
-    if (v.c1 === v.c2) w = { w1: 1.5, w2: 1.5 };
-    else if (v.c1 > v.c2) w = { w1: 1, w2: 2 };
-    else w = { w1: 2, w2: 1 };
-    w.c1 = v.c1;
-    w.c2 = v.c2;
-    return w;
-  }
-
-  // Toteutuneen tuloksen kerroin — tämä on ainoa kerroin joka vaikuttaa pisteisiin.
-  function resultWeight(match, players) {
-    if (!isResolved(match)) return null;
-    var w = matchWeights(match, players);
-    return match.result === "1" ? w.w1 : w.w2;
   }
 
   /* ---------- Kausiveikkaukset ----------
@@ -149,97 +119,6 @@
     putoaja_1: true, putoaja_2: true, putoaja_3: true,
     karpat_yleisokeskiarvo: true
   };
-
-  function normVal(v) {
-    if (v === null || v === undefined) return "";
-    return String(v).trim().toLowerCase();
-  }
-
-  function isResolvedCat(cat) {
-    return cat.answer !== null && cat.answer !== undefined && String(cat.answer).trim() !== "";
-  }
-
-  function rankGroupCats(categories, rankGroup) {
-    return categories.filter(function (c) { return c.rankGroup === rankGroup; });
-  }
-
-  function rankGroupResolved(categories, rankGroup) {
-    var group = rankGroupCats(categories, rankGroup);
-    return group.length > 0 && group.every(isResolvedCat);
-  }
-
-  // Palauttaa pisteet yhdestä veikkauksesta, tai null jos kategoria ei ole
-  // vielä ratkennut (tarkkuusveikkauksissa "lähimpänä" -bonus lasketaan erikseen).
-  // Toimii sekä virallisille (answer) että live-ennakon kategorioille -- kutsuja
-  // päättää mistä "answer" on peräisin.
-  function pointsForCategory(cat, categories, pick) {
-    if (cat.type === "team-rank") {
-      if (!rankGroupResolved(categories, cat.rankGroup)) return null;
-      if (!pick) return 0;
-      if (normVal(pick) === normVal(cat.answer)) return 3;
-      var group = rankGroupCats(categories, cat.rankGroup);
-      var rightTeamWrongSlot = group.some(function (c) { return normVal(c.answer) === normVal(pick); });
-      return rightTeamWrongSlot ? 1 : 0;
-    }
-    if (cat.type === "exact") {
-      if (!isResolvedCat(cat)) return null;
-      if (!pick) return 0;
-      return normVal(pick) === normVal(cat.answer) ? 1 : 0;
-    }
-    if (cat.type === "numeric-tolerance") {
-      if (!isResolvedCat(cat)) return null;
-      if (pick === "" || pick === null || pick === undefined || isNaN(Number(pick))) return 0;
-      var diff = Math.abs(Number(pick) - Number(cat.answer));
-      return diff <= cat.tolerance ? 1 : 0;
-    }
-    return null;
-  }
-
-  // Ketkä osuivat lähimmäs oikeaa lukuarvoa (jaettu bonuspiste tasapelissä).
-  function closestPlayers(cat, players, predictions) {
-    if (!isResolvedCat(cat)) return [];
-    var answer = Number(cat.answer);
-    var best = null;
-    var winners = [];
-    players.forEach(function (name) {
-      var pick = predictions[name];
-      if (pick === undefined || pick === null || pick === "" || isNaN(Number(pick))) return;
-      var diff = Math.abs(Number(pick) - answer);
-      if (best === null || diff < best) {
-        best = diff;
-        winners = [name];
-      } else if (diff === best) {
-        winners.push(name);
-      }
-    });
-    return winners;
-  }
-
-  // Laskee jokaisen kategorian veikkaukset + pisteet ja pelaajakohtaiset summat
-  // VIRALLISTEN (season-bets.json:in "answer") vastausten perusteella.
-  function computeSeasonScores(season, players) {
-    var categories = season.categories;
-    var totals = {};
-    players.forEach(function (name) { totals[name] = 0; });
-
-    var detail = categories.map(function (cat) {
-      var predictions = (season.predictions && season.predictions[cat.id]) || {};
-      var closest = cat.type === "numeric-tolerance" ? closestPlayers(cat, players, predictions) : [];
-
-      var picks = {};
-      players.forEach(function (name) {
-        var pick = predictions[name];
-        var pts = pointsForCategory(cat, categories, pick);
-        if (pts !== null && closest.indexOf(name) !== -1) pts += 1;
-        picks[name] = { value: pick, points: pts };
-        if (pts) totals[name] += pts;
-      });
-
-      return { cat: cat, picks: picks, closest: closest };
-    });
-
-    return { totals: totals, detail: detail };
-  }
 
   /* ---------- Kausiveikkausten "live" ennakko ----------
      Lasketaan Liiga.fi:n tuoreesta datasta sama vastaus jonka
@@ -331,88 +210,11 @@
     return detail;
   }
 
-  // Pelaajakohtaiset kausiveikkausten KOKONAISPISTEET "jos kausi loppuisi nyt":
-  // ratkenneet kategoriat pisteytetään virallisella vastauksella (ei koskaan
-  // muutu), ratkeamattomat live-lasketulla johtajalla siltä osin kuin sellainen
-  // on saatavilla. Käytetään vain Sarjataulukon "live"-näkymässä -- ei koskaan
-  // viralliseen kokonaissummaan.
+  // Pelaajakohtaiset kausiveikkausten KOKONAISPISTEET "jos kausi loppuisi nyt".
+  // Itse pisteytys asuu scoring.js:ssä; liveAnswerFor annetaan sille callbackina
+  // koska se riippuu Liiga-APIn datamuodosta eikä kuulu puhtaaseen logiikkaan.
   function computeLiveSeasonTotals(season, players, live) {
-    if (!season || !live) return null;
-
-    var categories = season.categories.map(function (cat) {
-      if (isResolvedCat(cat)) return cat;
-      var clone = {};
-      for (var k in cat) if (Object.prototype.hasOwnProperty.call(cat, k)) clone[k] = cat[k];
-      clone.answer = liveAnswerFor(cat.id, live);
-      return clone;
-    });
-
-    var totals = {};
-    players.forEach(function (name) { totals[name] = 0; });
-
-    categories.forEach(function (cat) {
-      var predictions = (season.predictions && season.predictions[cat.id]) || {};
-      var closest = cat.type === "numeric-tolerance" ? closestPlayers(cat, players, predictions) : [];
-      players.forEach(function (name) {
-        var pick = predictions[name];
-        var pts = pointsForCategory(cat, categories, pick);
-        if (pts !== null && closest.indexOf(name) !== -1) pts += 1;
-        if (pts) totals[name] += pts;
-      });
-    });
-
-    return totals;
-  }
-
-  /* ---------- Ottelupisteiden laskenta ---------- */
-
-  function computeMatchPoints(data) {
-    var points = {}, hits = {}, played = {};
-    data.players.forEach(function (name) { points[name] = 0; hits[name] = 0; played[name] = 0; });
-
-    data.matches.forEach(function (match) {
-      if (!isResolved(match)) return;
-      var weight = resultWeight(match, data.players);
-      data.players.forEach(function (name) {
-        var pick = match.predictions ? match.predictions[name] : undefined;
-        if (pick !== "1" && pick !== "2") return;
-        played[name]++;
-        if (pick === match.result) {
-          hits[name]++;
-          points[name] += weight;
-        }
-      });
-    });
-
-    return { points: points, hits: hits, played: played };
-  }
-
-  function computeStandings(data, seasonTotals) {
-    seasonTotals = seasonTotals || {};
-    var mp = computeMatchPoints(data);
-
-    var rows = data.players.map(function (name) {
-      return {
-        name: name,
-        points: mp.points[name] + (seasonTotals[name] || 0),
-        hits: mp.hits[name],
-        played: mp.played[name]
-      };
-    });
-
-    rows.sort(function (a, b) {
-      if (b.points !== a.points) return b.points - a.points;
-      return a.name.localeCompare(b.name, "fi");
-    });
-    return rows;
-  }
-
-  // Lisämerkintä jatkoajasta / voittolaukauksista
-  function overtimeTag(finishedType) {
-    if (!finishedType) return "";
-    if (finishedType.indexOf("WINNING_SHOT") !== -1) return "vl";
-    if (finishedType.indexOf("OVERTIME") !== -1) return "ja";
-    return "";
+    return BTScoring.computeLiveSeasonTotals(season, players, live, liveAnswerFor);
   }
 
   /* ---------- Piirto: Sarjataulukko / Seuraava ottelu / Otteluloki ---------- */
@@ -902,6 +704,132 @@
     }
   }
 
+  /* ---------- Piirto: Ennätykset-välilehti ---------- */
+     /* Pelkkää dataa jo pelatuista otteluista -- keskinäiset "voitot" (kumpi
+        osui kun toinen ei), kauden suurin yllätys (harvinaisin osuma) ja
+        pisimmät osumaputket. Kaikki laskettavissa suoraan data.jsonista. */
+
+  function computeHeadToHead(data) {
+    var resolved = data.matches.filter(isResolved);
+    var wins = {};
+    data.players.forEach(function (name) { wins[name] = 0; });
+
+    resolved.forEach(function (m) {
+      data.players.forEach(function (a) {
+        var pickA = m.predictions ? m.predictions[a] : undefined;
+        var aHit = pickA === m.result;
+        if (!aHit) return;
+        data.players.forEach(function (b) {
+          if (a === b) return;
+          var pickB = m.predictions ? m.predictions[b] : undefined;
+          if (pickB !== m.result) wins[a]++;
+        });
+      });
+    });
+
+    return Object.keys(wins)
+      .map(function (name) { return { name: name, wins: wins[name] }; })
+      .sort(function (a, b) { return b.wins - a.wins || a.name.localeCompare(b.name, "fi"); });
+  }
+
+  function findBiggestUpset(data) {
+    var resolved = data.matches.filter(isResolved);
+    var best = null, bestWeight = -1;
+    resolved.forEach(function (m) {
+      var w = resultWeight(m, data.players);
+      if (w > bestWeight) { bestWeight = w; best = m; }
+    });
+    return best ? { match: best, weight: bestWeight } : null;
+  }
+
+  function computeLongestStreaks(data) {
+    var sorted = data.matches
+      .map(function (m) { return { m: m, d: parseDate(m.date) }; })
+      .filter(function (x) { return x.d && isResolved(x.m); })
+      .sort(function (a, b) { return a.d - b.d; });
+
+    var streaks = {};
+    data.players.forEach(function (name) {
+      var current = 0, best = 0;
+      sorted.forEach(function (x) {
+        var pick = x.m.predictions ? x.m.predictions[name] : undefined;
+        if (pick !== "1" && pick !== "2") return;
+        if (pick === x.m.result) { current++; if (current > best) best = current; }
+        else { current = 0; }
+      });
+      streaks[name] = best;
+    });
+
+    return Object.keys(streaks)
+      .map(function (name) { return { name: name, streak: streaks[name] }; })
+      .sort(function (a, b) { return b.streak - a.streak || a.name.localeCompare(b.name, "fi"); });
+  }
+
+  function renderRecords() {
+    var content = $("records-content");
+    content.innerHTML = "";
+
+    var data = state.data;
+    var resolvedCount = data.matches.filter(isResolved).length;
+    if (!resolvedCount) {
+      content.appendChild(el("p", "empty", "Ei vielä ratkenneita otteluita."));
+      return;
+    }
+
+    var h2h = computeHeadToHead(data);
+    var h2hBlock = el("div", "stat-block");
+    h2hBlock.appendChild(el("h3", "stat-block-h", "Keskinäiset voitot"));
+    h2hBlock.appendChild(el("p", "sec-note",
+      "Kerta lasketaan voitoksi kun sinä osuit ja toinen ei, samasta ottelusta."));
+    var h2hList = el("ol", "stat-leader-list");
+    h2h.forEach(function (row) {
+      var li = el("li", "stat-leader-row");
+      li.appendChild(el("span", "stat-leader-name", row.name));
+      li.appendChild(el("span", "stat-leader-val", row.wins));
+      h2hList.appendChild(li);
+    });
+    h2hBlock.appendChild(h2hList);
+    content.appendChild(h2hBlock);
+
+    var upset = findBiggestUpset(data);
+    if (upset) {
+      var m = upset.match;
+      var upsetBlock = el("div", "stat-block");
+      upsetBlock.appendChild(el("h3", "stat-block-h", "Kauden suurin yllätys"));
+      var card = el("div", "upset-card");
+      var teams = el("p", "upset-teams");
+      teams.appendChild(el("span", m.homeTeam === TEAM ? "m-karpat" : null, m.homeTeam));
+      teams.appendChild(document.createTextNode(" – "));
+      teams.appendChild(el("span", m.awayTeam === TEAM ? "m-karpat" : null, m.awayTeam));
+      card.appendChild(teams);
+      if (m.homeGoals !== undefined && m.awayGoals !== undefined) {
+        card.appendChild(el("p", "upset-score", m.homeGoals + "–" + m.awayGoals));
+      }
+      var vw = matchWeights(m, data.players);
+      var winners = data.players.filter(function (name) {
+        return m.predictions && m.predictions[name] === m.result;
+      });
+      card.appendChild(el("p", "upset-meta",
+        m.date + " · kerroin ×" + fmtPoints(upset.weight) +
+        " · oikein veikkasi: " + (winners.length ? winners.join(", ") : "ei kukaan")));
+      upsetBlock.appendChild(card);
+      content.appendChild(upsetBlock);
+    }
+
+    var streaks = computeLongestStreaks(data);
+    var streakBlock = el("div", "stat-block");
+    streakBlock.appendChild(el("h3", "stat-block-h", "Pisimmät osumaputket"));
+    var streakList = el("ol", "stat-leader-list");
+    streaks.forEach(function (row) {
+      var li = el("li", "stat-leader-row");
+      li.appendChild(el("span", "stat-leader-name", row.name));
+      li.appendChild(el("span", "stat-leader-val", row.streak + (row.streak === 1 ? " osuma" : " osumaa")));
+      streakList.appendChild(li);
+    });
+    streakBlock.appendChild(streakList);
+    content.appendChild(streakBlock);
+  }
+
   /* ---------- Piirto: Live-banneri ---------- */
 
   function renderLiveBanner(game) {
@@ -1057,20 +985,39 @@
 
   /* ---------- Välilehdet ja suodattimet ---------- */
 
+  // WAI-ARIA Tabs -malli: nuolet siirtävät JA aktivoivat (automaattinen
+  // aktivointi), Home/End hyppäävät ensimmäiseen/viimeiseen. Vain aktiivisella
+  // välilehdellä on tabindex="0" (roving tabindex) -- muut ohitetaan Tab-
+  // näppäimellä, sisällä liikutaan nuolilla.
   function wireTabs() {
-    var buttons = document.querySelectorAll(".tab");
+    var buttons = Array.prototype.slice.call(document.querySelectorAll(".tab"));
     var panels = document.querySelectorAll(".tab-panel");
-    Array.prototype.forEach.call(buttons, function (btn) {
-      btn.addEventListener("click", function () {
-        var tab = btn.getAttribute("data-tab");
-        Array.prototype.forEach.call(buttons, function (b) {
-          var on = b === btn;
-          b.classList.toggle("is-on", on);
-          b.setAttribute("aria-selected", on ? "true" : "false");
-        });
-        Array.prototype.forEach.call(panels, function (p) {
-          p.hidden = p.id !== "tab-" + tab;
-        });
+
+    function activate(btn, focus) {
+      var tab = btn.getAttribute("data-tab");
+      buttons.forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle("is-on", on);
+        b.setAttribute("aria-selected", on ? "true" : "false");
+        b.tabIndex = on ? 0 : -1;
+      });
+      Array.prototype.forEach.call(panels, function (p) {
+        p.hidden = p.id !== "tab-" + tab;
+      });
+      if (focus) btn.focus();
+    }
+
+    buttons.forEach(function (btn, i) {
+      btn.addEventListener("click", function () { activate(btn, false); });
+      btn.addEventListener("keydown", function (e) {
+        var target = null;
+        if (e.key === "ArrowRight") target = buttons[(i + 1) % buttons.length];
+        else if (e.key === "ArrowLeft") target = buttons[(i - 1 + buttons.length) % buttons.length];
+        else if (e.key === "Home") target = buttons[0];
+        else if (e.key === "End") target = buttons[buttons.length - 1];
+        if (!target) return;
+        e.preventDefault();
+        activate(target, true);
       });
     });
   }
@@ -1111,6 +1058,7 @@
     renderMatches(state.data);
     renderSeason(state.season, state.data.players, seasonComputed, liveDetail);
     renderStatsReference();
+    renderRecords();
   }
 
   /* ---------- Käynnistys ---------- */
@@ -1173,5 +1121,13 @@
     document.addEventListener("DOMContentLoaded", boot);
   } else {
     boot();
+  }
+
+  // PWA-kevennys: sivun voi lisätä aloitusnäytölle, ja app shell + viimeisin
+  // onnistuneesti haettu data.json/season-bets.json toimivat pätkivällä
+  // yhteydellä. Valinnainen -- rekisteröinnin epäonnistuminen ei vaikuta
+  // muuhun sivuun.
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
   }
 })();

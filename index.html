@@ -7,6 +7,11 @@
 <meta name="description" content="Bästa Tittare -porukan veikkaukset Kärppien runkosarjasta.">
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="logo.png" type="image/png">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BT-Veikkaus">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
@@ -29,10 +34,11 @@
   <p class="status" id="status">Ladataan veikkauksia…</p>
 
   <nav class="tabs" role="tablist" aria-label="Näkymät" id="tabs" hidden>
-    <button type="button" class="tab is-on" data-tab="ottelut" role="tab" aria-selected="true">Ottelut</button>
-    <button type="button" class="tab" data-tab="kausi" role="tab" aria-selected="false">Kausiveikkaukset</button>
-    <button type="button" class="tab" data-tab="tilastot" role="tab" aria-selected="false">Tilastot</button>
-    <button type="button" class="tab" data-tab="ennuste" role="tab" aria-selected="false">Ennuste</button>
+    <button type="button" class="tab is-on" data-tab="ottelut" role="tab" aria-selected="true" tabindex="0">Ottelut</button>
+    <button type="button" class="tab" data-tab="kausi" role="tab" aria-selected="false" tabindex="-1">Kausiveikkaukset</button>
+    <button type="button" class="tab" data-tab="tilastot" role="tab" aria-selected="false" tabindex="-1">Tilastot</button>
+    <button type="button" class="tab" data-tab="ennuste" role="tab" aria-selected="false" tabindex="-1">Ennuste</button>
+    <button type="button" class="tab" data-tab="ennatykset" role="tab" aria-selected="false" tabindex="-1">Ennätykset</button>
   </nav>
 
   <!-- ================= OTTELUT ================= -->
@@ -143,6 +149,17 @@
     </section>
   </div>
 
+  <!-- ================= ENNÄTYKSET ================= -->
+  <div class="tab-panel" id="tab-ennatykset" role="tabpanel" hidden>
+    <section class="records" aria-labelledby="records-h">
+      <div class="sec-head">
+        <h2 class="sec-h" id="records-h">Ennätykset</h2>
+        <p class="sec-note">Hauskoja lukuja jo pelatuista otteluista.</p>
+      </div>
+      <div id="records-content"></div>
+    </section>
+  </div>
+
 </main>
 
 <footer class="foot">
@@ -159,6 +176,7 @@
   </div>
 </footer>
 
+<script src="scoring.js"></script>
 <script src="liiga-live.js"></script>
 <script src="app.js"></script>
 </body>

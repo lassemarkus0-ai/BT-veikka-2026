@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<title>BT-Veikkaus — testit</title>
+<style>
+  body { background: #000; color: #fff; font-family: system-ui, sans-serif; padding: 24px; }
+  h1 { color: #FFCD00; }
+  #summary { font-weight: 700; margin-bottom: 16px; }
+  ul { list-style: none; padding: 0; }
+  li { padding: 4px 0; font-family: monospace; }
+  .pass { color: #4CAF50; }
+  .fail { color: #FF6B6B; }
+</style>
+</head>
+<body>
+<h1>scoring.js — testit</h1>
+<p id="summary">Ajetaan…</p>
+<ul id="results"></ul>
+
+<script src="scoring.js"></script>
+<script src="scoring.test.js"></script>
+<script>
+  var data = window.BTTestResults;
+  document.getElementById("summary").textContent = data.summary;
+  var list = document.getElementById("results");
+  data.results.forEach(function (r) {
+    var li = document.createElement("li");
+    li.className = r.ok ? "pass" : "fail";
+    li.textContent = (r.ok ? "PASS" : "FAIL") + " — " + r.name + (r.error ? ": " + r.error : "");
+    list.appendChild(li);
+  });
+</script>
+</body>
+</html>
