@@ -1,0 +1,46 @@
+name: Update Kärpät results
+
+on:
+  schedule:
+    # Times are UTC; GitHub cron does not follow DST.
+    # Finland is UTC+3 in early autumn, UTC+2 for most of the season.
+    - cron: "30 20 * * *"   # ~22:30 / 23:30 Finnish time -- after evening games finish
+    - cron: "0 5 * * *"     # ~07:00 / 08:00 Finnish time -- catch-up for late finishes
+  workflow_dispatch:        # lets you trigger a run by hand from the Actions tab
+
+# Never let two runs write data.json at once.
+concurrency:
+  group: update-results
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write       # required so the job can push the updated data.json
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Update results from the Liiga API
+        run: python update_bets.py --data data.json
+
+      - name: Commit and push if data.json changed
+        run: |
+          if git diff --quiet -- data.json; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data.json
+          git commit -m "Update Kärpät results [skip ci]"
+          # Rebase in case something else landed on the branch mid-run.
+          git pull --rebase --autostash
+          git push
