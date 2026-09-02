@@ -47,7 +47,23 @@ body {
   background: var(--field);
 }
 
-.masthead-in { padding-block: 18px 14px; }
+.masthead-in {
+  padding-block: 18px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.masthead-text { min-width: 0; }
+
+.masthead-logo {
+  display: block;
+  width: 92px;
+  height: auto;
+  flex: 0 0 auto;
+}
 
 .wordmark {
   font-family: var(--display);
@@ -804,6 +820,7 @@ section + section { margin-top: 36px; }
   :root { --gutter: 24px; }
 
   .masthead-in { padding-block: 26px 20px; }
+  .masthead-logo { width: 128px; }
   .sec-h { font-size: 1.75rem; }
   .next-teams { font-size: 1.875rem; }
 
