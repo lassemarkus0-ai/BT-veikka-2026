@@ -1,0 +1,484 @@
+/* BT-Veikkaus — jäähallin tulostaulu.
+   Mobile first: perusasettelu on puhelimelle, laajemmat näytöt
+   avataan media queryillä alempana. */
+
+:root {
+  --field:   #000000;   /* pohja — Kärppien musta */
+  --panel:   #141414;   /* kohotettu pinta */
+  --panel-2: #1E1E1E;   /* toissijainen pinta */
+  --line:    #2C2C2C;   /* hiusviiva */
+  --keltainen: #FFCD00; /* Kärppien keltainen — ainoa korostusväri */
+  --keltainen-dim: #6B5600;
+  --valkoinen: #FFFFFF;
+  --himmea: #8A8A8A;
+
+  --display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --body: "Archivo", system-ui, -apple-system, sans-serif;
+
+  --gutter: 16px;
+  --max: 1080px;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--field);
+  color: var(--valkoinen);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ---------- Otsikkopalkki ---------- */
+
+.masthead {
+  border-bottom: 2px solid var(--keltainen);
+  background: var(--field);
+}
+
+.masthead-in { padding-block: 18px 14px; }
+
+.wordmark {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(2rem, 11vw, 3.25rem);
+  line-height: 0.92;
+  letter-spacing: 0.01em;
+  margin: 0;
+  color: var(--keltainen);
+}
+
+.wordmark-dash { color: var(--valkoinen); }
+
+.masthead-sub {
+  margin: 6px 0 0;
+  font-size: 0.8125rem;
+  color: var(--himmea);
+  letter-spacing: 0.02em;
+}
+
+/* ---------- Osiot ---------- */
+
+main { padding-block: 24px 40px; }
+
+section + section { margin-top: 36px; }
+
+.sec-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 12px;
+}
+
+.sec-h {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.5rem;
+  letter-spacing: 0.02em;
+  margin: 0 0 12px;
+  color: var(--valkoinen);
+}
+
+.sec-head .sec-h { margin-bottom: 0; }
+
+.sec-note {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--himmea);
+}
+
+/* ---------- Seuraava ottelu ---------- */
+
+.next-card {
+  background: var(--panel);
+  border-left: 3px solid var(--keltainen);
+  padding: 14px 14px 12px;
+}
+
+.next-meta { margin-bottom: 12px; }
+
+.next-date {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--keltainen);
+  letter-spacing: 0.06em;
+  margin-bottom: 2px;
+}
+
+.next-teams {
+  display: block;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+
+.next-picks {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+}
+
+.next-pick {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--panel-2);
+  padding: 6px 10px;
+  min-height: 36px;
+}
+
+.next-pick-name {
+  font-size: 0.8125rem;
+  color: var(--himmea);
+}
+
+.next-pick-val {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--keltainen);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Sarjataulukko (sivun sankari) ---------- */
+
+.stand {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--panel);
+}
+
+.stand-row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.stand-row:last-child { border-bottom: 0; }
+
+.stand-rank {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--himmea);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.stand-row.is-lead .stand-rank { color: var(--keltainen); }
+
+.stand-main { min-width: 0; }
+
+.stand-name {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.375rem;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stand-row.is-lead .stand-name { color: var(--keltainen); }
+
+/* Tulostaulun palkki */
+.track {
+  margin-top: 6px;
+  height: 6px;
+  background: var(--panel-2);
+  overflow: hidden;
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--keltainen-dim);
+  transition: width 700ms cubic-bezier(.2,.7,.3,1);
+}
+
+.stand-row.is-lead .fill { background: var(--keltainen); }
+
+.stand-figs {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.stand-pts {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.625rem;
+  line-height: 1;
+  color: var(--valkoinen);
+}
+
+.stand-row.is-lead .stand-pts { color: var(--keltainen); }
+
+.stand-pct {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--himmea);
+  margin-top: 2px;
+}
+
+/* ---------- Suodattimet ---------- */
+
+.filters { display: flex; gap: 6px; }
+
+.filter {
+  font-family: var(--body);
+  font-size: 0.8125rem;
+  color: var(--himmea);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 9px 12px;      /* riittävä kosketusalue */
+  min-height: 40px;
+  cursor: pointer;
+}
+
+.filter:hover { color: var(--valkoinen); }
+
+.filter.is-on {
+  color: var(--field);
+  background: var(--keltainen);
+  border-color: var(--keltainen);
+  font-weight: 600;
+}
+
+/* ---------- Selite ---------- */
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin: 0 0 12px;
+  font-size: 0.75rem;
+  color: var(--himmea);
+}
+
+.lg { display: inline-flex; align-items: center; gap: 6px; }
+
+.chip-demo { cursor: default; }
+
+/* ---------- Otteluloki ---------- */
+
+.log-head { display: none; }
+
+.matches {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.match {
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+  padding: 12px 14px;
+}
+
+.match.is-upcoming { background: transparent; }
+
+.m-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.m-date {
+  font-size: 0.75rem;
+  color: var(--himmea);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.m-teams {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.125rem;
+  line-height: 1.15;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.m-karpat { color: var(--keltainen); }
+
+.m-score {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.25rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.m-score .m-ot {
+  font-family: var(--body);
+  font-weight: 500;
+  font-size: 0.6875rem;
+  color: var(--himmea);
+  margin-left: 3px;
+}
+
+.m-score.is-pending {
+  font-family: var(--body);
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--himmea);
+}
+
+.m-picks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Veikkausmerkki */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 30px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  color: var(--himmea);
+  background: var(--panel-2);
+  border: 1px solid transparent;
+  font-variant-numeric: tabular-nums;
+}
+
+.chip b {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--valkoinen);
+}
+
+.chip.is-hit {
+  background: var(--keltainen);
+  color: #4A3D00;
+  font-weight: 600;
+}
+
+.chip.is-hit b { color: var(--field); }
+
+.chip.is-miss {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--himmea);
+}
+
+.chip.is-miss b {
+  color: var(--himmea);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+/* ---------- Tilaviestit ---------- */
+
+.status, .empty {
+  margin: 20px 0 0;
+  padding: 16px 14px;
+  background: var(--panel);
+  border-left: 3px solid var(--keltainen);
+  font-size: 0.875rem;
+  color: var(--himmea);
+}
+
+.status.is-error { color: var(--valkoinen); }
+
+/* ---------- Alatunniste ---------- */
+
+.foot {
+  border-top: 1px solid var(--line);
+  margin-top: 40px;
+  padding-block: 20px 28px;
+  font-size: 0.75rem;
+  color: var(--himmea);
+}
+
+.foot p { margin: 0 0 4px; }
+
+/* ---------- Saavutettavuus ---------- */
+
+:focus-visible {
+  outline: 2px solid var(--keltainen);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill { transition: none; }
+  * { scroll-behavior: auto; }
+}
+
+/* ---------- Suuremmat näytöt ---------- */
+
+@media (min-width: 600px) {
+  :root { --gutter: 24px; }
+
+  .masthead-in { padding-block: 26px 20px; }
+  .sec-h { font-size: 1.75rem; }
+  .next-teams { font-size: 1.875rem; }
+
+  .stand-row { grid-template-columns: 34px 1fr auto; padding: 14px 18px; gap: 14px; }
+  .stand-name { font-size: 1.5rem; }
+  .stand-pts { font-size: 1.875rem; }
+
+  .match { padding: 14px 18px; }
+  .m-teams { font-size: 1.25rem; }
+}
+
+/* Taulukkomuoto vasta kun sarakkeille on oikeasti tilaa */
+@media (min-width: 900px) {
+  .log-head {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr) 96px minmax(0, 380px);
+    gap: 16px;
+    padding: 0 18px 8px;
+    font-size: 0.6875rem;
+    color: var(--himmea);
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .match {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr) 96px minmax(0, 380px);
+    gap: 16px;
+    align-items: center;
+  }
+
+  .m-top {
+    display: contents;   /* päivä, ottelu ja tulos asettuvat sarakkeisiin */
+  }
+
+  .m-picks { justify-content: flex-end; flex-wrap: nowrap; }
+
+  .matches { border-top: 0; }
+}
