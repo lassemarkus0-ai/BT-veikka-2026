@@ -13,7 +13,7 @@
       "date": "01.09.2026 18.30",
       "homeTeam": "Kärpät",
       "awayTeam": "Ässät",
-      "result": "",
+      "result": "1",
       "predictions": {
         "Asko": "1",
         "Markus": "1",
@@ -22,7 +22,10 @@
         "Kari": "1",
         "Pasi": "1",
         "Olavi": "2"
-      }
+      },
+      "homeGoals": 3,
+      "awayGoals": 1,
+      "finishedType": "ENDED_DURING_REGULAR_GAME_TIME"
     },
     {
       "date": "05.09.2026 17.00",
