@@ -31,7 +31,7 @@
       "date": "05.09.2026 17.00",
       "homeTeam": "Kärpät",
       "awayTeam": "JYP",
-      "result": "",
+      "result": "2",
       "predictions": {
         "Asko": "1",
         "Markus": "1",
@@ -40,7 +40,10 @@
         "Kari": "2",
         "Pasi": "2",
         "Olavi": "2"
-      }
+      },
+      "homeGoals": 3,
+      "awayGoals": 4,
+      "finishedType": "ENDED_DURING_REGULAR_GAME_TIME"
     },
     {
       "date": "16.09.2026 18.30",
