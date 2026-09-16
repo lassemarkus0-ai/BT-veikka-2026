@@ -49,7 +49,7 @@
       "date": "16.09.2026 18.30",
       "homeTeam": "Kärpät",
       "awayTeam": "Ilves",
-      "result": "",
+      "result": "2",
       "predictions": {
         "Asko": "1",
         "Markus": "2",
@@ -58,7 +58,10 @@
         "Kari": "2",
         "Pasi": "1",
         "Olavi": "1"
-      }
+      },
+      "homeGoals": 3,
+      "awayGoals": 4,
+      "finishedType": "ENDED_DURING_EXTENDED_GAME_TIME"
     },
     {
       "date": "19.09.2026 17.00",
