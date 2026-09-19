@@ -67,7 +67,7 @@
       "date": "19.09.2026 17.00",
       "homeTeam": "Kärpät",
       "awayTeam": "Sport",
-      "result": "",
+      "result": "1",
       "predictions": {
         "Asko": "1",
         "Markus": "1",
@@ -76,7 +76,10 @@
         "Kari": "1",
         "Pasi": "1",
         "Olavi": "1"
-      }
+      },
+      "homeGoals": 3,
+      "awayGoals": 2,
+      "finishedType": "ENDED_DURING_REGULAR_GAME_TIME"
     },
     {
       "date": "22.09.2026 18.30",
