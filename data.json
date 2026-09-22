@@ -85,7 +85,7 @@
       "date": "22.09.2026 18.30",
       "homeTeam": "Tappara",
       "awayTeam": "Kärpät",
-      "result": "",
+      "result": "2",
       "predictions": {
         "Asko": "1",
         "Markus": "2",
@@ -94,7 +94,10 @@
         "Kari": "2",
         "Pasi": "2",
         "Olavi": "2"
-      }
+      },
+      "homeGoals": 4,
+      "awayGoals": 0,
+      "finishedType": "ENDED_DURING_REGULAR_GAME_TIME"
     },
     {
       "date": "23.09.2026 18.30",
