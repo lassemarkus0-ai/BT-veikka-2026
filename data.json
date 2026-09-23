@@ -103,7 +103,7 @@
       "date": "23.09.2026 18.30",
       "homeTeam": "HIFK",
       "awayTeam": "Kärpät",
-      "result": "",
+      "result": "2",
       "predictions": {
         "Asko": "1",
         "Markus": "1",
@@ -112,7 +112,10 @@
         "Kari": "2",
         "Pasi": "2",
         "Olavi": "1"
-      }
+      },
+      "homeGoals": 3,
+      "awayGoals": 1,
+      "finishedType": "ENDED_DURING_REGULAR_GAME_TIME"
     },
     {
       "date": "26.09.2026 17.00",
