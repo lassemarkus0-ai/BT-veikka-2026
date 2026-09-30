@@ -139,7 +139,7 @@
       "date": "30.09.2026 18.30",
       "homeTeam": "Kärpät",
       "awayTeam": "SaiPa",
-      "result": "",
+      "result": "1",
       "predictions": {
         "Asko": "1",
         "Markus": "1",
@@ -148,7 +148,10 @@
         "Kari": "1",
         "Pasi": "2",
         "Olavi": "1"
-      }
+      },
+      "homeGoals": 4,
+      "awayGoals": 1,
+      "finishedType": "ENDED_DURING_REGULAR_GAME_TIME"
     },
     {
       "date": "02.10.2026 18.30",
