@@ -175,7 +175,7 @@
       "date": "03.10.2026 17.00",
       "homeTeam": "HPK",
       "awayTeam": "Kärpät",
-      "result": "",
+      "result": "2",
       "predictions": {
         "Asko": "1",
         "Markus": "1",
@@ -184,7 +184,10 @@
         "Kari": "1",
         "Pasi": "1",
         "Olavi": "2"
-      }
+      },
+      "homeGoals": 2,
+      "awayGoals": 1,
+      "finishedType": "ENDED_DURING_EXTENDED_GAME_TIME"
     },
     {
       "date": "06.10.2026 18.30",
