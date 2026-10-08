@@ -193,7 +193,7 @@
       "date": "06.10.2026 18.30",
       "homeTeam": "Kärpät",
       "awayTeam": "K-Espoo",
-      "result": "",
+      "result": "1",
       "predictions": {
         "Asko": "1",
         "Markus": "1",
@@ -202,7 +202,10 @@
         "Kari": "1",
         "Pasi": "1",
         "Olavi": "1"
-      }
+      },
+      "homeGoals": 8,
+      "awayGoals": 7,
+      "finishedType": "ENDED_DURING_EXTENDED_GAME_TIME"
     },
     {
       "date": "09.10.2026 18.30",
