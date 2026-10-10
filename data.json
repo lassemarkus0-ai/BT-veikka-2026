@@ -229,7 +229,7 @@
       "date": "10.10.2026 17.00",
       "homeTeam": "Jukurit",
       "awayTeam": "Kärpät",
-      "result": "",
+      "result": "2",
       "predictions": {
         "Asko": "1",
         "Markus": "1",
@@ -238,7 +238,10 @@
         "Kari": "1",
         "Pasi": "1",
         "Olavi": "1"
-      }
+      },
+      "homeGoals": 2,
+      "awayGoals": 1,
+      "finishedType": "ENDED_DURING_EXTENDED_GAME_TIME"
     },
     {
       "date": "16.10.2026 19.30",
