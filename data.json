@@ -211,7 +211,7 @@
       "date": "09.10.2026 18.30",
       "homeTeam": "Pelicans",
       "awayTeam": "Kärpät",
-      "result": "",
+      "result": "1",
       "predictions": {
         "Asko": "1",
         "Markus": "2",
@@ -220,7 +220,10 @@
         "Kari": "2",
         "Pasi": "1",
         "Olavi": "1"
-      }
+      },
+      "homeGoals": 2,
+      "awayGoals": 3,
+      "finishedType": "ENDED_DURING_EXTENDED_GAME_TIME"
     },
     {
       "date": "10.10.2026 17.00",
