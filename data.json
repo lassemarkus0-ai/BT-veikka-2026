@@ -247,7 +247,7 @@
       "date": "16.10.2026 19.30",
       "homeTeam": "JYP",
       "awayTeam": "Kärpät",
-      "result": "",
+      "result": "1",
       "predictions": {
         "Asko": "2",
         "Markus": "1",
@@ -256,7 +256,10 @@
         "Kari": "2",
         "Pasi": "2",
         "Olavi": "2"
-      }
+      },
+      "homeGoals": 4,
+      "awayGoals": 5,
+      "finishedType": "ENDED_DURING_EXTENDED_GAME_TIME"
     },
     {
       "date": "17.10.2026 17.00",
