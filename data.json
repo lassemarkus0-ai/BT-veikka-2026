@@ -265,7 +265,7 @@
       "date": "17.10.2026 17.00",
       "homeTeam": "Kärpät",
       "awayTeam": "KooKoo",
-      "result": "",
+      "result": "1",
       "predictions": {
         "Asko": "1",
         "Markus": "1",
@@ -274,7 +274,10 @@
         "Kari": "2",
         "Pasi": "1",
         "Olavi": "1"
-      }
+      },
+      "homeGoals": 4,
+      "awayGoals": 3,
+      "finishedType": "ENDED_DURING_WINNING_SHOT_COMPETITION"
     },
     {
       "date": "20.10.2026 18.30",
