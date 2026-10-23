@@ -301,7 +301,7 @@
       "date": "23.10.2026 18.30",
       "homeTeam": "Kärpät",
       "awayTeam": "KalPa",
-      "result": "",
+      "result": "1",
       "predictions": {
         "Asko": "1",
         "Markus": "1",
@@ -310,7 +310,10 @@
         "Kari": "2",
         "Pasi": "1",
         "Olavi": "2"
-      }
+      },
+      "homeGoals": 5,
+      "awayGoals": 2,
+      "finishedType": "ENDED_DURING_REGULAR_GAME_TIME"
     },
     {
       "date": "24.10.2026 17.00",
