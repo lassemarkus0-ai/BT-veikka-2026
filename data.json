@@ -391,7 +391,7 @@
       "date": "14.11.2026 17.00",
       "homeTeam": "Kärpät",
       "awayTeam": "Tappara",
-      "result": "",
+      "result": "1",
       "predictions": {
         "Asko": "1",
         "Markus": "2",
@@ -400,7 +400,10 @@
         "Kari": "2",
         "Pasi": "2",
         "Olavi": "2"
-      }
+      },
+      "homeGoals": 5,
+      "awayGoals": 1,
+      "finishedType": "ENDED_DURING_REGULAR_GAME_TIME"
     },
     {
       "date": "18.11.2026 18.30",
