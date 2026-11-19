@@ -409,7 +409,7 @@
       "date": "18.11.2026 18.30",
       "homeTeam": "TPS",
       "awayTeam": "Kärpät",
-      "result": "",
+      "result": "1",
       "predictions": {
         "Asko": "1",
         "Markus": "1",
@@ -418,7 +418,10 @@
         "Kari": "1",
         "Pasi": "1",
         "Olavi": "1"
-      }
+      },
+      "homeGoals": 3,
+      "awayGoals": 6,
+      "finishedType": "ENDED_DURING_REGULAR_GAME_TIME"
     },
     {
       "date": "20.11.2026 18.00",
