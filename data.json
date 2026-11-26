@@ -463,7 +463,7 @@
       "date": "25.11.2026 18.30",
       "homeTeam": "Kärpät",
       "awayTeam": "Pelicans",
-      "result": "",
+      "result": "2",
       "predictions": {
         "Asko": "1",
         "Markus": "1",
@@ -472,7 +472,10 @@
         "Kari": "1",
         "Pasi": "1",
         "Olavi": "1"
-      }
+      },
+      "homeGoals": 2,
+      "awayGoals": 6,
+      "finishedType": "ENDED_DURING_REGULAR_GAME_TIME"
     },
     {
       "date": "28.11.2026 17.00",
